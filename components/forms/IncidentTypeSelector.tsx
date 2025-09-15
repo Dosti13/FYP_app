@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet,ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { incidentTypes } from '../../constants/reportTypes';
 import { colors } from '../../constants/theme';
@@ -30,7 +30,7 @@ export function IncidentTypeSelector({
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <Text style={styles.title}>What happened?</Text>
       <Text style={styles.subtitle}>Select the type of incident</Text>
       
@@ -64,7 +64,7 @@ export function IncidentTypeSelector({
           </TouchableOpacity>
         ))}
       </View>
-    </View>
+    </ScrollView>
   );
 }
 

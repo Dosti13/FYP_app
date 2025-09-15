@@ -24,46 +24,39 @@ class LocationValidationService {
   }
 
   // Validate location data completeness
-  validateLocationData(location: {
-    province?: string;
-    city?: string;
-    latitude?: number;
-    longitude?: number;
-  }): ValidationResult {
+  validateLocationData(latitude: number, longitude: number, 
+  
+  ): ValidationResult {
     const errors: string[] = [];
     const warnings: string[] = [];
 
     // Check coordinates
-    if (location.latitude && location.longitude) {
-      if (!this.isWithinPakistan(location.latitude, location.longitude)) {
+    if (latitude && longitude) {
+      if (!this.isWithinPakistan(latitude, longitude)) {
         warnings.push('Location appears to be outside Pakistan');
       }
     }
 
     // Check province/city combination
-    if (location.province && location.city) {
-      if (!this.isValidProvinceCity(location.province, location.city)) {
-        warnings.push('City may not belong to the selected province');
-      }
-    }
+  
 
     return { isValid: errors.length === 0, errors, warnings };
   }
 
   // Check if city belongs to province (basic validation)
-  private isValidProvinceCity(province: string, city: string): boolean {
-    const validCombinations: Record<string, string[]> = {
-      'Sindh': ['Karachi', 'Hyderabad', 'Sukkur', 'Larkana', 'Nawabshah', 'Mirpur Khas', 'Shikarpur', 'Jacobabad'],
-      'Punjab': ['Lahore', 'Faisalabad', 'Rawalpindi', 'Multan', 'Gujranwala', 'Sialkot', 'Bahawalpur', 'Sargodha', 'Sheikhupura', 'Jhang'],
-      'KPK': ['Peshawar', 'Mardan', 'Abbottabad', 'Swat', 'Kohat', 'Bannu', 'Dera Ismail Khan', 'Mingora'],
-      'Balochistan': ['Quetta', 'Gwadar', 'Turbat', 'Khuzdar', 'Hub', 'Chaman', 'Zhob'],
-      'ICT': ['Islamabad'],
-      'AJK': ['Muzaffarabad', 'Mirpur', 'Rawalakot', 'Kotli'],
-      'GB': ['Gilgit', 'Skardu', 'Hunza', 'Ghanche'],
-    };
+  // private isValidProvinceCity(province: string, city: string): boolean {
+  //   const validCombinations: Record<string, string[]> = {
+  //     'Sindh': ['Karachi', 'Hyderabad', 'Sukkur', 'Larkana', 'Nawabshah', 'Mirpur Khas', 'Shikarpur', 'Jacobabad'],
+  //     'Punjab': ['Lahore', 'Faisalabad', 'Rawalpindi', 'Multan', 'Gujranwala', 'Sialkot', 'Bahawalpur', 'Sargodha', 'Sheikhupura', 'Jhang'],
+  //     'KPK': ['Peshawar', 'Mardan', 'Abbottabad', 'Swat', 'Kohat', 'Bannu', 'Dera Ismail Khan', 'Mingora'],
+  //     'Balochistan': ['Quetta', 'Gwadar', 'Turbat', 'Khuzdar', 'Hub', 'Chaman', 'Zhob'],
+  //     'ICT': ['Islamabad'],
+  //     'AJK': ['Muzaffarabad', 'Mirpur', 'Rawalakot', 'Kotli'],
+  //     'GB': ['Gilgit', 'Skardu', 'Hunza', 'Ghanche'],
+  //   };
 
-    return validCombinations[province]?.includes(city) || false;
-  }
+  //   return validCombinations[province]?.includes(city) || false;
+  // }
 
   // Calculate distance between two points
   calculateDistance(

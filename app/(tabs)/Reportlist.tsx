@@ -21,7 +21,7 @@ export default function ReportListScreen() {
     route.navigate('/report/add');
   };
 
-  if (loading) {
+  if (!loading) {
     return (
       <SafeScreen>
         <View style={styles.centerContainer}>

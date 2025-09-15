@@ -54,8 +54,7 @@ export function ReportCard({ report }: ReportCardProps) {
         return '#f97316';
       case 'street robbery':
         return '#b91c1c';
-      case 'harassment':
-        return '#ea580c';
+    
       default:
         return '#6b7280';
     }

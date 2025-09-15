@@ -1,15 +1,14 @@
 // components/forms/LocationForm.tsx (Enhanced with Map)
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity,ScrollView, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Input } from '../common/Input';
-import { Button } from '../common/Button';
 import { LocationPicker } from './LocationPicker';
 import { MapLocationPicker } from './MapLocationPicker';
-import { useLocation } from '../../hooks/useLocation';
 import { LocationData } from '../../constants/types/report';
 import { colors } from '../../constants/theme';
-
+import { locationService } from '../../services/api/locationSevice';
+import { locationValidationService } from '@/services';
 interface LocationFormProps {
   data: LocationData;
   onUpdate: (data: Partial<LocationData>) => void;
@@ -18,26 +17,34 @@ interface LocationFormProps {
 export function LocationForm({ data, onUpdate }: LocationFormProps) {
   const [locationMethod, setLocationMethod] = useState<'form' | 'map' | 'current'>('form');
   const [showMapPicker, setShowMapPicker] = useState(false);
-  const { getCurrentLocation, isLoadingLocation } = useLocation();
+    const [isLoadingLocation, setIsLoadingLocation] = useState(false);
+
 
   const handleCurrentLocation = async () => {
+    setIsLoadingLocation(true);
     setLocationMethod('current');
-    const location = await getCurrentLocation();
+    const location = await locationService.getCurrentLocation();
     if (location) {
       onUpdate({
-        latitude: location.latitude,
-        longitude: location.longitude,
-        street_address: `${location.latitude.toFixed(6)}, ${location.longitude.toFixed(6)}`,
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+        street_address: `${location.coords.latitude.toFixed(6)}, ${location.coords.longitude.toFixed(6)}`,
       });
-      
+      const validate =  locationValidationService.validateLocationData(location.coords.latitude, location.coords.longitude  );
+      Alert.alert('Location Validation', 
+        validate.isValid ? 'Location data is valid.' : `Errors: ${validate.errors.join(', ')}\nWarnings: ${validate.warnings.join(', ')}`
+      );
       // Reverse geocode to get address details
       try {
-        const addressInfo = await reverseGeocode(location.latitude, location.longitude);
+        const addressInfo = await locationService.reverseGeocode(location.coords.latitude, location.coords.longitude);
         if (addressInfo) {
           onUpdate(addressInfo);
         }
       } catch (error) {
         console.log('Reverse geocoding failed:', error);
+      }
+      finally {
+        setIsLoadingLocation(false);  
       }
     }
   };
@@ -52,44 +59,10 @@ export function LocationForm({ data, onUpdate }: LocationFormProps) {
     setLocationMethod('form');
   };
 
-  const reverseGeocode = async (lat: number, lng: number) => {
-    try {
-      const response = await fetch(
-        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${process.env.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY}`
-      );
-      const data = await response.json();
-      
-      if (data.status === 'OK' && data.results.length > 0) {
-        const result = data.results[0];
-        const addressComponents = result.address_components;
-        
-        // Parse address components
-        const getComponent = (types: string[]) => {
-          const component = addressComponents.find((comp: any) =>
-            comp.types.some((type: string) => types.includes(type))
-          );
-          return component?.long_name || '';
-        };
 
-        return {
-          street_address: result.formatted_address,
-          neighborhood: getComponent(['sublocality_level_1', 'neighborhood']),
-          district: getComponent(['administrative_area_level_2']),
-          city: getComponent(['locality', 'administrative_area_level_3']),
-          province: getComponent(['administrative_area_level_1']),
-          latitude: lat,
-          longitude: lng,
-        };
-      }
-      return null;
-    } catch (error) {
-      console.error('Reverse geocoding error:', error);
-      return null;
-    }
-  };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <Text style={styles.title}>Where did this happen?</Text>
       <Text style={styles.subtitle}>Choose how you want to set the location</Text>
 
@@ -220,7 +193,7 @@ export function LocationForm({ data, onUpdate }: LocationFormProps) {
           onCancel={() => setShowMapPicker(false)}
         />
       )}
-    </View>
+    </ScrollView>
   );
 }
 

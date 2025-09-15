@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { Input } from '../common/Input';
 import { StolenItemData } from '../../constants/types/report';
 import { colors } from '../../constants/theme';
@@ -12,7 +12,7 @@ interface StolenItemFormProps {
 
 export function StolenItemForm({ data, itemType, onUpdate }: StolenItemFormProps) {
   const renderPhoneFields = () => (
-    <>
+    <ScrollView>
       <Text style={styles.sectionTitle}>Phone Details</Text>
       
       <Input
@@ -43,11 +43,11 @@ export function StolenItemForm({ data, itemType, onUpdate }: StolenItemFormProps
           />
         </View>
       </View>
-    </>
+    </ScrollView>
   );
 
   const renderVehicleFields = () => (
-    <>
+    <ScrollView>
       <Text style={styles.sectionTitle}>Vehicle Details</Text>
       
       <Input
@@ -83,11 +83,11 @@ export function StolenItemForm({ data, itemType, onUpdate }: StolenItemFormProps
           />
         </View>
       </View>
-    </>
+    </ScrollView>
   );
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <Text style={styles.title}>Stolen Item Details</Text>
       <Text style={styles.subtitle}>Tell us about what was stolen</Text>
 
@@ -111,7 +111,7 @@ export function StolenItemForm({ data, itemType, onUpdate }: StolenItemFormProps
 
       {itemType === 'phone' && renderPhoneFields()}
       {itemType === 'vehicle' && renderVehicleFields()}
-    </View>
+    </ScrollView>
   );
 }
 

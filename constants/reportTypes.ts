@@ -37,21 +37,13 @@ export const incidentTypes: IncidentType[] = [
     itemType: 'bag'
   },
   { 
-    id: 'robbery', 
-    category: 'Street Robbery',
-    description: 'Armed robbery or mugging',
-    icon: 'warning-outline', 
-    color: '#b91c1c',
+    id: 'other_theft', 
+    category: 'Other Theft',
+    description: 'Theft of items not listed elsewhere',
+    icon: 'alert-circle-outline', 
+    color: '#6b7280',
     requiresItem: false,
     itemType: 'other'
   },
-  { 
-    id: 'harassment', 
-    category: 'Harassment',
-    description: 'Street harassment or threats',
-    icon: 'chatbubble-ellipses-outline', 
-    color: '#ea580c',
-    requiresItem: false,
-    itemType: null
-  },
+
 ];
