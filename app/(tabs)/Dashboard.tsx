@@ -1,8 +1,25 @@
 import { Text ,ScrollView,Image} from 'react-native';
 import { Button } from '../../components/common/Button';
 import { useRouter } from 'expo-router';
+import React, { useEffect } from "react";
+import * as Location from "expo-location";
+import { restrictedAreaWatcher } from '../../services/background/restrictedAreaWatcher';
+// import { restrictedAreas } from '../../utils/dumyData';
+// import { locationService } from '../../services/api/locationSevice';
+// import { notificationService } from '../../services/api/notificationService';
 export default function Dashboard() {
   const route = useRouter();
+  
+  useEffect(() => {
+    // Start background watcher when app loads
+    restrictedAreaWatcher.startWatching();
+
+    return () => {
+      restrictedAreaWatcher.stopWatching();
+    };
+  }, []);
+
+
   const handleAddReport = () => {
     route.navigate('/report/add');
   };

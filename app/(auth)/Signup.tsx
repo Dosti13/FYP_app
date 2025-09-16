@@ -9,8 +9,9 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
-import InputText from '../../components/InputText';
-import ThemeButton from '../../components/Themebtn';
+// import InputText from '../../components/InputText';
+import {Input}  from '../../components/common/Input';
+import { Button } from '@/components/common/Button';
 export default function SignUp() {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
@@ -35,14 +36,14 @@ export default function SignUp() {
         </View>
 
         <View style={styles.formContainer}>
-          <InputText
+          <Input
             placeholder="Full Name"
             value={fullName}
             onChangeText={setFullName}
             autoCapitalize="words"
           />
 
-          <InputText
+          <Input
             placeholder="Email Address"
             value={email}
             onChangeText={setEmail}
@@ -50,21 +51,22 @@ export default function SignUp() {
             autoCapitalize="none"
           />
 
-          <InputText
+          <Input
             placeholder="Password"
             value={password}
             onChangeText={setPassword}
             secureTextEntry
+            style={{ marginBottom: 5 }}
           />
 
-          <InputText
+          <Input
             placeholder="Confirm Password"
             value={confirmPassword}
             onChangeText={setConfirmPassword}
             secureTextEntry
           />
 
-          <ThemeButton 
+          <Button 
             title="Sign Up"
             onPress={handleSignUp}
             style={styles.buttonSpacing}

@@ -46,7 +46,7 @@ export interface IncidentData {
 export interface ReportData {
   location: LocationData;
   victim: VictimData;
-  incident_type: IncidentTypeData;
+  incident_type: IncidentTypeData | null;
   stolen_item: StolenItemData;
   incident: IncidentData;
 }

@@ -3,7 +3,7 @@ import { View, Text, TextInput, StyleSheet, TextInputProps } from 'react-native'
 import { colors } from '../../constants/theme';
 
 interface InputProps extends TextInputProps {
-  label: string;
+  label?: string;
   required?: boolean;
   error?: string;
 }
@@ -32,7 +32,7 @@ export function Input({ label, required, error, style, ...props }: InputProps) {
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 20,
+    marginBottom: 10,
   },
   label: {
     fontSize: 16,

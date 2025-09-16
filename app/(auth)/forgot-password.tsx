@@ -8,8 +8,7 @@ import {
     TextInput,
     View,
 } from 'react-native';
-import ThemeButton from '../../components/Themebtn';
-
+import { Button } from '@/components/common/Button';
 export default function ForgotPassword() {
   const router = useRouter();
   const [email, setEmail] = useState('');
@@ -46,13 +45,13 @@ export default function ForgotPassword() {
           autoCapitalize="none"
         />
 
-        <ThemeButton 
+        <Button
           title="Reset Password"
           onPress={handleResetPassword}
           style={styles.buttonSpacing}
         />
 
-        <ThemeButton 
+        <Button
           title="Back to Sign In"
           onPress={() => router.back()}
           style={[styles.buttonSpacing, styles.secondaryButton]}

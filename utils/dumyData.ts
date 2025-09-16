@@ -6,9 +6,18 @@ export const dummyReports = [
   { id: "5", location: "Multan", type: "Robbery", time: "02:10 PM" },
 ];
 // data/dummyRestrictedAreas.ts
-import { RestrictedArea } from "../services/api/geofencingService";
-
-export const dummyAreas = [
+type RiskLevel = "HIGH" | "MEDIUM" | "LOW";
+export interface RestrictedArea {
+  id: string;
+  name: string;
+  coordinates: {
+    latitude: number;
+    longitude: number;
+  };
+  radius: number;
+  riskLevel: RiskLevel; // ✅ strongly typed
+}
+export const dummyAreas : RestrictedArea[]= [
     {
       id: "1",
       name: "Karachi Saddar",
@@ -16,6 +25,7 @@ export const dummyAreas = [
       radius: 3000,
       riskLevel: "HIGH",
     },
+
     {
       id: "2",
       name: "Lahore Liberty",
@@ -37,5 +47,12 @@ export const dummyAreas = [
       radius: 2500,
       riskLevel: "HIGH",
     },
+    {
+      id: "5",
+      name: "Gulshan e Ghazali ", 
+      coordinates: { latitude: 24.87133506553972,  longitude: 67.17378170184742 },
+      radius: 1000,
+      riskLevel: "MEDIUM",
+    }
   ];
 

@@ -3,12 +3,12 @@ import { View, Text, TouchableOpacity, StyleSheet,ScrollView } from 'react-nativ
 import { Ionicons } from '@expo/vector-icons';
 import { incidentTypes } from '../../constants/reportTypes';
 import { colors } from '../../constants/theme';
-
+import { ReportData } from '../../constants/types/report';
 interface IncidentTypeSelectorProps {
   selectedType: any;
   onSelect: (type: any) => void;
   reportData: any;
-  onUpdateData: (key: string, value: any) => void;
+  onUpdateData: (key: keyof ReportData, value: any) => void;
  }
 
 export function IncidentTypeSelector({ 

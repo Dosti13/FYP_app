@@ -1,6 +1,6 @@
 export interface IncidentType {
   id: string;
-  category: string;
+  category?: string | null;
   description: string;
   icon: string;
   color: string;

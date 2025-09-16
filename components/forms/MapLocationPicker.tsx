@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Button } from '../common/Button';
 import { colors } from '../../constants/theme';
 import { locationService } from '../../services/api/locationSevice';
+import { locationValidationService } from '@/services';
 
 interface LocationData {
   latitude: number;
@@ -55,6 +56,20 @@ export function MapLocationPicker({
     
     try {
       // Use the location service for reverse geocoding
+       const isValid = locationValidationService.isWithinPakistan(
+      selectedLocation.latitude,
+      selectedLocation.longitude
+    );
+
+    if (!isValid) {
+      Alert.alert(
+        "Invalid Location",
+        "The selected location appears to be outside Pakistan. Please select a valid location inside Pakistan."
+      );
+      setIsLoading(false);
+      return; // ⛔ stop execution
+    }
+
       const geocodedData = await locationService.reverseGeocode(
         selectedLocation.latitude,
         selectedLocation.longitude

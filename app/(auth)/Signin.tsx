@@ -9,7 +9,8 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
-import ThemeButton from '../../components/Themebtn';
+import { Button } from '@/components/common/Button';
+
 export default function SignIn() {
   const router = useRouter();
   const [email, setEmail] = useState('');
@@ -49,7 +50,7 @@ export default function SignIn() {
           secureTextEntry
         />
 
-        <ThemeButton 
+        <Button 
           title="Sign In"
           onPress={handleSignIn}
           style={styles.buttonSpacing}

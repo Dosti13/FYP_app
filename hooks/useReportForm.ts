@@ -6,7 +6,7 @@ import { apiService } from '../services/api/apiSerivce';
 import { ReportData } from '../constants/types/report';
 import { IncidentType } from '../constants/reportTypes';
 import { validateReportStep } from '../utils/validation';
-
+import { getValidationErrors } from '../utils/validation';
 const initialReportData: ReportData = {
   location: {
     province: '',
@@ -68,15 +68,17 @@ export function useReportForm() {
   }, [reportData, selectedIncidentType]);
 
   const nextStep = useCallback(() => {
-    if (validateStep(currentStep)) {
-      if (currentStep === totalSteps) {
-        submitReport();
-      } else {
-        setCurrentStep(prev => prev + 1);
-      }
+      const errors = getValidationErrors(reportData, currentStep);
+
+  if (errors.length === 0) {
+    if (currentStep === totalSteps) {
+      submitReport();
     } else {
-      Alert.alert('Incomplete Information', 'Please fill in all required fields');
+      setCurrentStep(prev => prev + 1);
     }
+  } else {
+    Alert.alert('Validation Errors', errors.join('\n'));
+  }
   }, [currentStep, totalSteps, validateStep]);
 
   const prevStep = useCallback(() => {
@@ -107,7 +109,7 @@ export function useReportForm() {
       const result = await apiService.submitReport(submissionData);
       
       if (result.success) {
-        router.push('/report/success');
+        router.navigate('/report/success');
       } else {
         Alert.alert('Submission Failed', result.message);
       }

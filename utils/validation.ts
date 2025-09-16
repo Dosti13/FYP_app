@@ -1,5 +1,6 @@
 import { ReportData,} from '../constants/types/report';
 import { IncidentType } from '../constants/reportTypes';
+
 export function validateReportStep(
   step: number, 
   reportData: ReportData, 
@@ -7,12 +8,13 @@ export function validateReportStep(
 ): boolean {
   switch (step) {
     case 1: // Incident Type
-      return reportData.incident_type.category !== '';
+      return reportData.incident_type?.category !== '';
     
     case 2: // Location
       return reportData.location.province !== '' && 
              reportData.location.city !== '' &&
-             reportData.location.neighborhood !== '';
+             reportData.location.neighborhood !== '' &&
+             reportData.location.street_address !== '';
     
     case 3: // Incident Details
       return reportData.incident.occurred_at !== '';
@@ -46,7 +48,7 @@ export function getValidationErrors(reportData: ReportData, step: number): strin
 
   switch (step) {
     case 1:
-      if (!reportData.incident_type.category) {
+      if (!reportData.incident_type?.category) {
         errors.push('Please select an incident type');
       }
       break;
@@ -60,6 +62,9 @@ export function getValidationErrors(reportData: ReportData, step: number): strin
       }
       if (!reportData.location.neighborhood) {
         errors.push('Neighborhood is required');
+      }
+      if (!reportData.location.street_address) {
+        errors.push('Street address is required');
       }
       break;
 

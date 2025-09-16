@@ -35,10 +35,6 @@ export function ReportCard({ report }: ReportCardProps) {
         return 'car-outline';
       case 'bag snatching':
         return 'bag-outline';
-      case 'street robbery':
-        return 'warning-outline';
-      case 'harassment':
-        return 'chatbubble-ellipses-outline';
       default:
         return 'alert-circle-outline';
     }
@@ -52,8 +48,7 @@ export function ReportCard({ report }: ReportCardProps) {
         return '#dc2626';
       case 'bag snatching':
         return '#f97316';
-      case 'street robbery':
-        return '#b91c1c';
+  
     
       default:
         return '#6b7280';

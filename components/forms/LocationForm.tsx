@@ -1,6 +1,6 @@
 // components/forms/LocationForm.tsx (Enhanced with Map)
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity,ScrollView, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity,ScrollView} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Input } from '../common/Input';
 import { LocationPicker } from './LocationPicker';
@@ -8,7 +8,6 @@ import { MapLocationPicker } from './MapLocationPicker';
 import { LocationData } from '../../constants/types/report';
 import { colors } from '../../constants/theme';
 import { locationService } from '../../services/api/locationSevice';
-import { locationValidationService } from '@/services';
 interface LocationFormProps {
   data: LocationData;
   onUpdate: (data: Partial<LocationData>) => void;
@@ -30,10 +29,8 @@ export function LocationForm({ data, onUpdate }: LocationFormProps) {
         longitude: location.coords.longitude,
         street_address: `${location.coords.latitude.toFixed(6)}, ${location.coords.longitude.toFixed(6)}`,
       });
-      const validate =  locationValidationService.validateLocationData(location.coords.latitude, location.coords.longitude  );
-      Alert.alert('Location Validation', 
-        validate.isValid ? 'Location data is valid.' : `Errors: ${validate.errors.join(', ')}\nWarnings: ${validate.warnings.join(', ')}`
-      );
+     
+
       // Reverse geocode to get address details
       try {
         const addressInfo = await locationService.reverseGeocode(location.coords.latitude, location.coords.longitude);

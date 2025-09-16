@@ -85,7 +85,6 @@ export function MultiStepReportForm() {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.content}
       >
-        {/* Form Content - This was missing! */}
         <View style={styles.formContainer}>
           {renderCurrentStep()}
         </View>
