@@ -1,6 +1,8 @@
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import {AuthValidationService} from '../../services/auth/AuthValidationService';
 import {
+  Alert,
     Image,
     SafeAreaView,
     ScrollView,
@@ -19,6 +21,8 @@ export default function SignUp() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const router = useRouter();
  const handleSignUp = () => {
+  const loginErrors = AuthValidationService.validateSignup(fullName, email, password, confirmPassword);
+  Alert.alert("Login Validation", loginErrors.length ? loginErrors.join("\n") : "No errors");
   console.log('Signing up with:', { fullName, email, password });
   router.replace("/Dashboard");
 };

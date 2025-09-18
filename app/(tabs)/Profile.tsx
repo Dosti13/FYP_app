@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
     gap: 15,
   },
   addProfileBtn: {
-    backgroundColor: colors.buttonGreenLight,
+    backgroundColor: colors.primaryLight,
     paddingVertical: 8,
     paddingHorizontal: 18,
     borderRadius: 20,
@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   logoutBtn: {
-    backgroundColor: colors.buttonLight,
+    backgroundColor: colors.primaryDark,
     paddingVertical: 8,
     paddingHorizontal: 18,
     borderRadius: 20,

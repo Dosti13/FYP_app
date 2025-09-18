@@ -1,6 +1,8 @@
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import {AuthValidationService} from '../../services/auth/AuthValidationService';  
 import {
+  Alert,
     Image,
     SafeAreaView,
     StyleSheet,
@@ -18,9 +20,16 @@ export default function SignIn() {
 
   const handleSignIn = () => {
     // Add your authentication logic here
+    const loginErrors = AuthValidationService.validateLogin(email, password);
+    
+    if (loginErrors.length > 0) {
+      Alert.alert('Validation Error', loginErrors.join('\n'));
+      return;
+    }
     console.log('Signing in with:', email, password);
     router.navigate('/Dashboard');
   };
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -49,6 +58,7 @@ export default function SignIn() {
           onChangeText={setPassword}
           secureTextEntry
         />
+   
 
         <Button 
           title="Sign In"

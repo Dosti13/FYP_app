@@ -6,6 +6,7 @@ class LocationService {
 
   constructor() {
     this.googleApiKey = process.env.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY || '';
+    console.log('Google Places API Key:', this.googleApiKey ? 'Loaded' : 'Not Set');
   }
 
   // Google Places Autocomplete
