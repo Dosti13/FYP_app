@@ -1,6 +1,7 @@
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import {AuthValidationService} from '../../services/auth/AuthValidationService';  
+import { Input } from '@/components/common/Input';
 import {
   Alert,
     Image,
@@ -17,19 +18,32 @@ export default function SignIn() {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
+   const [passwordError, setPasswordError] = useState('');
+     const [emaiError, setEmailError] = useState('');
+    const [touched, setTouched] = useState({
+  email: false,
+  password: false,
+});
   const handleSignIn = () => {
     // Add your authentication logic here
+    setTouched({
+            email: true,
+            password: true,
+        });
     const loginErrors = AuthValidationService.validateLogin(email, password);
     
-    if (loginErrors.length > 0) {
-      Alert.alert('Validation Error', loginErrors.join('\n'));
+    if (Object.keys(loginErrors).length > 0) {
+      Alert.alert('Validation Error , All fields are required');
       return;
     }
     console.log('Signing in with:', email, password);
     router.navigate('/Dashboard');
   };
-
+  useEffect(() => { 
+  const errors = AuthValidationService.validateLogin(email, password);
+  if (touched.email) setEmailError(errors.email || "");
+  if (touched.password) setPasswordError(errors.password || "");
+}, [password, email,  touched]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -43,20 +57,29 @@ export default function SignIn() {
       </View>
 
       <View style={styles.formContainer}>
-        <TextInput
+        <Input
           style={styles.input}
           placeholder="Email"
           value={email}
           onChangeText={setEmail}
           keyboardType="email-address"
           autoCapitalize="none"
+          autoCorrect={false}
+          containerStyle={{ marginBottom: -10 }}
+          onBlur={() => setTouched(prev => ({ ...prev, email: true }))}
+          error={emaiError}
         />
-        <TextInput
+        <Input
           style={styles.input}
           placeholder="Password"
           value={password}
           onChangeText={setPassword}
           secureTextEntry
+          autoCapitalize="none"
+          autoCorrect={false}
+          containerStyle={{ marginBottom: 10 }}
+          onBlur={() => setTouched(prev => ({ ...prev, password: true }))}
+          error={passwordError}
         />
    
 

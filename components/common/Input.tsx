@@ -6,11 +6,12 @@ interface InputProps extends TextInputProps {
   label?: string;
   required?: boolean;
   error?: string;
+  containerStyle?: object;
 }
 
-export function Input({ label, required, error, style, ...props }: InputProps) {
+export function Input({ label, required, error, style,containerStyle, ...props }: InputProps) {
   return (
-    <View style={styles.container}>
+    <View style={[styles.container ,containerStyle]}>
       <Text style={styles.label}>
         {label}
         {required && <Text style={styles.required}> *</Text>}

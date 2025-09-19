@@ -10,6 +10,8 @@ import {
     Text,
     TouchableOpacity,
     View,
+    KeyboardAvoidingView,
+    Platform,
 } from 'react-native';
 // import InputText from '../../components/InputText';
 import {Input}  from '../../components/common/Input';
@@ -19,16 +21,45 @@ export default function SignUp() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+   const [passwordError, setPasswordError] = useState('');
+     const [emaiError, setEmailError] = useState('');
+     const [usernameError, setUsernameError] = useState('');
+     const [cnfrmpaassError, setCnfrmPassError] = useState('');
+     const [touched, setTouched] = useState({
+  fullName: false,
+  email: false,
+  password: false,
+  confirmPassword: false,
+});
   const router = useRouter();
  const handleSignUp = () => {
-  const loginErrors = AuthValidationService.validateSignup(fullName, email, password, confirmPassword);
-  Alert.alert("Login Validation", loginErrors.length ? loginErrors.join("\n") : "No errors");
+       setTouched({
+            fullName: true,
+            email: true,
+            password: true,
+            confirmPassword: true,
+        });
+  const signupErrors = AuthValidationService.validateSignup(fullName, email, password, confirmPassword);
+  if (Object.keys(signupErrors).length > 0) {
+    Alert.alert("all fields are required");
+    return;
+  }
   console.log('Signing up with:', { fullName, email, password });
   router.replace("/Dashboard");
 };
-
+useEffect(() => { 
+  const errors = AuthValidationService.validateSignup(fullName, email, password, confirmPassword);
+  if (touched.fullName) setUsernameError(errors.username || "");
+  if (touched.email) setEmailError(errors.email || "");
+  if (touched.password) setPasswordError(errors.password || "");
+  if (touched.confirmPassword) setCnfrmPassError(errors.confirm || "");
+}, [password, email, fullName, confirmPassword, touched]);
   return (
     <SafeAreaView style={styles.container}>
+         <KeyboardAvoidingView 
+                style={{ flex: 1 }}
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            >
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.logoContainer}>
           <Image
@@ -44,32 +75,40 @@ export default function SignUp() {
             placeholder="Full Name"
             value={fullName}
             onChangeText={setFullName}
-            autoCapitalize="words"
+            autoCapitalize="words"   
+            onBlur={() => setTouched(prev => ({ ...prev, fullName: true }))}
+            error={usernameError}
+            containerStyle={{ marginBottom: 0}}
           />
-
           <Input
             placeholder="Email Address"
             value={email}
             onChangeText={setEmail}
             keyboardType="email-address"
             autoCapitalize="none"
+            onBlur={() => setTouched(prev => ({ ...prev, email: true }))}
+            error={emaiError}
+            style={{ marginBottom: 0}}
           />
-
+         
           <Input
             placeholder="Password"
             value={password}
             onChangeText={setPassword}
             secureTextEntry
-            style={{ marginBottom: 5 }}
+            onBlur={() => setTouched(prev => ({ ...prev, password: true }))}
+            error={passwordError}
+            containerStyle={{ marginBottom: 0 }}
           />
-
           <Input
             placeholder="Confirm Password"
             value={confirmPassword}
             onChangeText={setConfirmPassword}
             secureTextEntry
+            onBlur={() => setTouched(prev => ({ ...prev, confirmPassword: true }))}
+            error={cnfrmpaassError}
+            containerStyle={{ marginBottom: 20 }}
           />
-
           <Button 
             title="Sign Up"
             onPress={handleSignUp}
@@ -84,6 +123,7 @@ export default function SignUp() {
           </View>
         </View>
       </ScrollView>
+        </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -101,6 +141,9 @@ const styles = StyleSheet.create({
   logo: {
     width: 100,
     height: 100,
+  },
+  input:{
+marginBottom:2
   },
   title: {
     fontSize: 24,
