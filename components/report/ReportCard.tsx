@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { colors } from '../../constants/theme';
-import { formatDate, formatCurrency } from '../../utils/formatters';
+import { formatCurrency } from '../../utils/formatters';
 
 interface ReportCardProps {
   report: {
@@ -80,7 +80,7 @@ export function ReportCard({ report }: ReportCardProps) {
             </Text>
           </View>
         </View>
-        <Text style={styles.date}>{formatDate(report.occurred_at)}</Text>
+        <Text style={styles.date}>{report.occurred_at}</Text>
       </View>
 
       {report.stolen_item && (

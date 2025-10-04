@@ -2,8 +2,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity,ScrollView} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Input } from '../common/Input';
-import { LocationPicker } from './LocationPicker';
 import { MapLocationPicker } from './MapLocationPicker';
 import { LocationData } from '../../constants/types/report';
 import { colors } from '../../constants/theme';
@@ -17,6 +15,7 @@ export function LocationForm({ data, onUpdate }: LocationFormProps) {
   const [locationMethod, setLocationMethod] = useState<'form' | 'map' | 'current'>('form');
   const [showMapPicker, setShowMapPicker] = useState(false);
     const [isLoadingLocation, setIsLoadingLocation] = useState(false);
+
 
 
   const handleCurrentLocation = async () => {
@@ -34,6 +33,7 @@ export function LocationForm({ data, onUpdate }: LocationFormProps) {
       // Reverse geocode to get address details
       try {
         const addressInfo = await locationService.reverseGeocode(location.coords.latitude, location.coords.longitude);
+        
         if (addressInfo) {
           onUpdate(addressInfo);
         }
@@ -46,15 +46,17 @@ export function LocationForm({ data, onUpdate }: LocationFormProps) {
     }
   };
 
-  const handleMapSelection = (locationData: Partial<LocationData>) => {
-    setLocationMethod('map');
-    onUpdate(locationData);
-    setShowMapPicker(false);
-  };
+  const handleMapSelection =async (locationData: Partial<LocationData>) => {
 
-  const handleFormInput = () => {
-    setLocationMethod('form');
-  };
+    setLocationMethod('map');
+ 
+
+    onUpdate(locationData);     
+    console.log(locationData,"location data from map picker");
+    
+    setShowMapPicker(false);
+
+  }
 
 
 
@@ -106,25 +108,7 @@ export function LocationForm({ data, onUpdate }: LocationFormProps) {
           </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={[
-            styles.methodOption,
-            locationMethod === 'form' && styles.selectedMethod
-          ]}
-          onPress={handleFormInput}
-        >
-          <Ionicons 
-            name="create" 
-            size={20} 
-            color={locationMethod === 'form' ? '#fff' : colors.primary} 
-          />
-          <Text style={[
-            styles.methodText,
-            locationMethod === 'form' && styles.selectedMethodText
-          ]}>
-            Enter Manually
-          </Text>
-        </TouchableOpacity>
+      
       </View>
 
       {/* Show selected location info if map or current location used */}
@@ -133,9 +117,6 @@ export function LocationForm({ data, onUpdate }: LocationFormProps) {
           <View style={styles.locationHeader}>
             <Ionicons name="location" size={16} color={colors.primary} />
             <Text style={styles.locationHeaderText}>Selected Location</Text>
-            <TouchableOpacity onPress={() => setLocationMethod('form')}>
-              <Text style={styles.editText}>Edit manually</Text>
-            </TouchableOpacity>
           </View>
           <Text style={styles.addressText}>{data.street_address}</Text>
           <Text style={styles.coordinatesText}>
@@ -144,41 +125,7 @@ export function LocationForm({ data, onUpdate }: LocationFormProps) {
         </View>
       )}
 
-      {/* Form fields - show based on method or if editing */}
-      {locationMethod === 'form' && (
-        <>
-          <LocationPicker
-            selectedProvince={data.province}
-            selectedCity={data.city}
-            onProvinceChange={(province) => onUpdate({ province, city: '' })}
-            onCityChange={(city) => onUpdate({ city })}
-          />
-
-          <Input
-            label="District"
-            placeholder="e.g., Karachi Central"
-            value={data.district}
-            onChangeText={(district) => onUpdate({ district })}
-          />
-
-          <Input
-            label="Neighborhood/Area"
-            placeholder="e.g., Gulshan-e-Iqbal"
-            value={data.neighborhood}
-            onChangeText={(neighborhood) => onUpdate({ neighborhood })}
-            required
-          />
-
-          <Input
-            label="Street Address"
-            placeholder="e.g., Block 13-D, Main University Road"
-            value={data.street_address}
-            onChangeText={(street_address) => onUpdate({ street_address })}
-            multiline
-          />
-        </>
-      )}
-
+      
       {/* Map Picker Modal */}
       {showMapPicker && (
         <MapLocationPicker
@@ -258,11 +205,7 @@ const styles = StyleSheet.create({
     marginLeft: 6,
     flex: 1,
   },
-  editText: {
-    fontSize: 12,
-    color: colors.primary,
-    textDecorationLine: 'underline',
-  },
+
   addressText: {
     fontSize: 14,
     color: colors.text,

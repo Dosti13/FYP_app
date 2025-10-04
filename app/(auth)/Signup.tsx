@@ -1,21 +1,23 @@
 import { useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import {AuthValidationService} from '../../services/auth/AuthValidationService';
+import { SocialLoginButtons } from '@/components/common/SocialLoginButtons';
+import { useAuthContext } from '@/hooks/socialcontext';
 import {
   Alert,
-    Image,
-    SafeAreaView,
     ScrollView,
-    StyleSheet,
     Text,
     TouchableOpacity,
     View,
     KeyboardAvoidingView,
     Platform,
 } from 'react-native';
-// import InputText from '../../components/InputText';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import {Input}  from '../../components/common/Input';
 import { Button } from '@/components/common/Button';
+import { Logo } from '@/components/common/logo';
+import { authStyles } from './authStyles';
 export default function SignUp() {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
@@ -32,6 +34,8 @@ export default function SignUp() {
   confirmPassword: false,
 });
   const router = useRouter();
+    const { signInWithGoogle, signInWithFacebook, loading, isSignedIn } = useAuthContext();
+
  const handleSignUp = () => {
        setTouched({
             fullName: true,
@@ -47,6 +51,7 @@ export default function SignUp() {
   console.log('Signing up with:', { fullName, email, password });
   router.replace("/Dashboard");
 };
+
 useEffect(() => { 
   const errors = AuthValidationService.validateSignup(fullName, email, password, confirmPassword);
   if (touched.fullName) setUsernameError(errors.username || "");
@@ -54,23 +59,46 @@ useEffect(() => {
   if (touched.password) setPasswordError(errors.password || "");
   if (touched.confirmPassword) setCnfrmPassError(errors.confirm || "");
 }, [password, email, fullName, confirmPassword, touched]);
-  return (
-    <SafeAreaView style={styles.container}>
-         <KeyboardAvoidingView 
-                style={{ flex: 1 }}
-                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            >
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={styles.logoContainer}>
-          <Image
-            source={require('../../assets/images/Map-Marker.png')}
-            style={styles.logo}
-            resizeMode="contain"
-          />
-          <Text style={styles.title}>Create Account</Text>
-        </View>
 
-        <View style={styles.formContainer}>
+  useEffect(() => {
+    if (isSignedIn) {
+      router.replace('/Dashboard'); // Redirect to dashboard or main app screen
+    }
+  }, [isSignedIn]);
+  const handleSignInWithGoogle = async () => {
+    try {
+      await signInWithGoogle();
+      // Navigation handled by useEffect above
+    } catch (err) {
+      console.error("Google login error:", err);
+      Alert.alert('Login Failed', 'Could not sign in with Google. Please try again.');
+    }
+  };
+
+  const handleSignInWithFacebook = async () => {
+    try {
+      await signInWithFacebook();
+      // Navigation handled by useEffect above
+    } catch (err) {
+      console.error("Facebook login error:", err);
+      Alert.alert('Login Failed', 'Could not sign in with Facebook. Please try again.');
+    }
+  };
+  console.log("SignUp")
+  return (
+    <SafeAreaView style={authStyles.container}>
+    <KeyboardAwareScrollView
+   showsVerticalScrollIndicator={false}
+        extraScrollHeight={40}
+        enableOnAndroid={true}
+        keyboardShouldPersistTaps="handled"
+        contentContainerStyle={{ flexGrow: 1, paddingBottom: 30 }}
+  // adjust as needed
+  >
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <Logo title="Create Account" />
+
+        <View style={authStyles.formContainer}>
           <Input
             placeholder="Full Name"
             value={fullName}
@@ -78,7 +106,7 @@ useEffect(() => {
             autoCapitalize="words"   
             onBlur={() => setTouched(prev => ({ ...prev, fullName: true }))}
             error={usernameError}
-            containerStyle={{ marginBottom: 0}}
+            containerStyle={{ marginBottom: -10}}
           />
           <Input
             placeholder="Email Address"
@@ -88,7 +116,7 @@ useEffect(() => {
             autoCapitalize="none"
             onBlur={() => setTouched(prev => ({ ...prev, email: true }))}
             error={emaiError}
-            style={{ marginBottom: 0}}
+            style={{ marginBottom: -10}}
           />
          
           <Input
@@ -98,7 +126,7 @@ useEffect(() => {
             secureTextEntry
             onBlur={() => setTouched(prev => ({ ...prev, password: true }))}
             error={passwordError}
-            containerStyle={{ marginBottom: 0 }}
+            containerStyle={{ marginBottom: -10 }}
           />
           <Input
             placeholder="Confirm Password"
@@ -112,77 +140,24 @@ useEffect(() => {
           <Button 
             title="Sign Up"
             onPress={handleSignUp}
-            style={styles.buttonSpacing}
+            style={authStyles.buttonSpacing}
           />
-
-          <View style={styles.signinContainer}>
-            <Text style={styles.signinText}>Already have an account? </Text>
+          <SocialLoginButtons
+          onGooglePress={handleSignInWithGoogle}
+          onFacebookPress={handleSignInWithFacebook}
+          loading={loading}
+          showDivider={true}
+        />
+          <View style={authStyles.authLinkContainer}>
+            <Text style={authStyles.linkText}>Already have an account? </Text>
             <TouchableOpacity onPress={() => router.navigate('/Signin')}>
-              <Text style={styles.signinLink}>Sign In</Text>
+              <Text style={authStyles.authLink}>Sign In</Text>
             </TouchableOpacity>
           </View>
         </View>
       </ScrollView>
-        </KeyboardAvoidingView>
+        </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  logoContainer: {
-    alignItems: 'center',
-    marginTop: 40,
-    marginBottom: 30,
-  },
-  logo: {
-    width: 100,
-    height: 100,
-  },
-  input:{
-marginBottom:2
-  },
-  title: {
-    fontSize: 24,
-    fontFamily: 'DMBold',
-    marginTop: 10,
-    color: '#333',
-  },
-  formContainer: {
-    padding: 20,
-  },
-  button: {
-    backgroundColor: '#FF4B4B',
-    padding: 15,
-    borderRadius: 10,
-    alignItems: 'center',
-    marginTop: 10,
-  },
-  buttonSpacing: {
-    marginTop: 10,
-    width: '100%',
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontFamily: 'DMBold',
-  },
-  signinContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginTop: 20,
-  },
-  signinText: {
-    color: '#666',
-    fontSize: 14,
-    fontFamily: 'DMRegular',
-  },
-  signinLink: {
-    color: '#7eff4bff',
-    fontSize: 14,
-    fontFamily: 'DMBold',
-  },
-});

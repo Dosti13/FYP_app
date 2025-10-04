@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function AuthLayout() {
   const insets = useSafeAreaInsets();
+  console.log("authloyout");
   
   return (
     <View style={{ flex: 1 }}>
@@ -16,9 +17,10 @@ export default function AuthLayout() {
         }} 
       />
       <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="forgot-password" />
         <Stack.Screen name="Signin" />
         <Stack.Screen name="Signup" />
+        <Stack.Screen name="emailverification" />
+        <Stack.Screen name="forgot-password" />
       </Stack>
     </View>
   );

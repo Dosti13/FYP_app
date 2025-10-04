@@ -1,10 +1,13 @@
 // app/index.tsx
-import { Image } from "expo-image";
 import React from "react";
-import { ImageBackground, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ImageBackground, StyleSheet, Text,  View } from "react-native";
 import { useRouter } from "expo-router";
+import { Logo } from "@/components/common/logo";
+import { Button } from "@/components/common/Button";
 export default function Onbording() {
   const router = useRouter();
+  console.log("onbaording ");
+  
   return (
     <View style={styles.container}>
       <ImageBackground
@@ -14,30 +17,19 @@ export default function Onbording() {
       >
         <View style={styles.overlay}>
           <View style={styles.content}>
-            <View style={styles.logoContainer}>
-             <Image
-                       source={require('../assets/images/Map-Marker.png')}
-                       style={styles.logo}
-                        resizeMode="contain"        
-                     />
-              <Text style={styles.title}>Snatch Alert</Text>
-              <Text style={styles.subtitle}>To report the street crime</Text>
-            </View>
-
+        <Logo  title="Snatch ALert "/>
             <View style={styles.buttonContainer}>
-              <TouchableOpacity
+              <Button
                 style={styles.button}
                 onPress={() => router.navigate("/Signin")}
-              >
-                <Text style={styles.buttonText}>Log in or sign up</Text>
-              </TouchableOpacity>
+                title="Login"                     
+                />
 
-              <TouchableOpacity
+                <Button
                 style={styles.button}
                 onPress={() => router.navigate("/Signup")}
-              >
-                <Text style={styles.buttonText}>Complete signup</Text>
-              </TouchableOpacity>
+                title="Comlete Signup"                     
+                />
             </View>
           </View>
 
@@ -68,10 +60,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
   },
-    logo: {
-    width: 120,
-    height: 120,
-  },
+
   content: {
     flex: 1,
     justifyContent: "center",
@@ -79,33 +68,10 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingHorizontal: 20,
   },
-  logoContainer: {
-    alignItems: "center",
-    marginBottom: 40,
-  },
-  icon: {
-    width: 70,
-    height: 70,
-    borderRadius: 35,
-    backgroundColor: "#2ecc71",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  check: {
-    fontSize: 32,
-    color: "white",
-  },
-  title: {
-    color: "white",
-    fontSize: 24,
-    fontWeight: "bold",
-    marginTop: 10,
-  },
-  subtitle: {
-    color: "#ccc",
-    fontSize: 14,
-    marginTop: 5,
-  },
+
+
+
+
   buttonContainer: {
     width: '100%',
     maxWidth: 300,
@@ -120,11 +86,7 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
   },
-  buttonText: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "600",
-  },
+
   footer: {
     color: "#aaa",
     fontSize: 12,

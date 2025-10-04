@@ -1,126 +1,60 @@
-// app/(tabs)/account.tsx
-import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { Button } from "@/components/common/Button";
+import { useAuth, useUser } from "@clerk/clerk-expo";
 import { Ionicons } from "@expo/vector-icons";
-import { colors, textStyles } from "../../constants/theme"; // adjust path
-
+import { useRouter } from "expo-router";
+import React from "react";
+import { Text, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { colors } from "../../constants/theme";
+import tabStyles from "../../utils/tabStyle";
 export default function Account() {
+  const route = useRouter();
+  const {user,isSignedIn} = useUser()
+  const { signOut } = useAuth()
+  const  handlelogout=()=> {
+    signOut()
+    route.navigate('/Onbording')
+  };
+  console.log("prof");
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>Profile & settings</Text>
+    <SafeAreaView style={tabStyles.container}>
+      <Text style={tabStyles.header}>Profile & settings</Text>
 
       {/* Avatar */}
-      <View style={styles.avatarContainer}>
-        <View style={styles.avatar}>
+      <View style={tabStyles.avatarContainer}>
+        <View style={tabStyles.avatar}>
           <Ionicons name="person" size={60} color={colors.mutedText} />
         </View>
-        <Text style={styles.name}>(Name)</Text>
-        <Text style={styles.email}>(Email address)</Text>
+        <Text style={tabStyles.name}>{user?.fullName}</Text>
+        <Text style={tabStyles.email}>{user?.primaryEmailAddress?.emailAddress}</Text>
       </View>
 
       {/* Buttons */}
-      <View style={styles.buttonRow}>
-        <TouchableOpacity style={styles.addProfileBtn}>
-          <Text style={styles.addProfileText}>add profile</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.logoutBtn}>
-          <Text style={styles.logoutText}>Logout?</Text>
-        </TouchableOpacity>
-      </View>
+      <View style={tabStyles.buttonRow}>
+        <Button title="see  my report"  style={tabStyles.addProfileBtn}  onPress={()=>route.navigate('/(tabs)/Reportlist')}/>
+\        <Button title="Logout"  style={tabStyles.logoutBtn}  onPress={handlelogout}/>
+\      </View>
 
       {/* Menu */}
-      <View style={styles.menu}>
-        <TouchableOpacity style={styles.menuItem}>
+      <View style={tabStyles.menu}>
+        <TouchableOpacity style={tabStyles.menuItem}
+        onPress={() => route.navigate("/settings/HelpSupport")}
+        >
           <Ionicons name="help-circle-outline" size={22} color={colors.text} />
-          <Text style={styles.menuText}>Help & support</Text>
+          <Text style={tabStyles.menuText}>Help & support</Text>
           <Ionicons name="chevron-forward" size={20} color={colors.text} />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.menuItem}>
+        <TouchableOpacity style={tabStyles.menuItem} 
+        onPress={() => route.navigate("/settings/TermsCondition")}
+        >
           <Ionicons name="document-text-outline" size={22} color={colors.text} />
-          <Text style={styles.menuText}>Terms & conditions</Text>
+          <Text style={tabStyles.menuText}>Terms & conditions</Text>
           <Ionicons name="chevron-forward" size={20} color={colors.text} />
         </TouchableOpacity>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-    paddingTop: 40,
-  },
-  header: {
-    ...textStyles.subHeading,
-    textAlign: "center",
-    marginBottom: 20,
-  },
-  avatarContainer: {
-    alignItems: "center",
-    marginBottom: 20,
-  },
-  avatar: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: colors.border,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  name: {
-    marginTop: 10,
-    fontSize: 18,
-    fontWeight: "500",
-    color: colors.text,
-  },
-  email: {
-    ...textStyles.muted,
-  },
-  buttonRow: {
-    flexDirection: "row",
-    justifyContent: "center",
-    marginVertical: 15,
-    gap: 15,
-  },
-  addProfileBtn: {
-    backgroundColor: colors.primaryLight,
-    paddingVertical: 8,
-    paddingHorizontal: 18,
-    borderRadius: 20,
-  },
-  addProfileText: {
-    color: colors.primary,
-    fontSize: 14,
-    fontWeight: "600",
-  },
-  logoutBtn: {
-    backgroundColor: colors.primaryDark,
-    paddingVertical: 8,
-    paddingHorizontal: 18,
-    borderRadius: 20,
-  },
-  logoutText: {
-    color: colors.text,
-    fontSize: 14,
-    fontWeight: "600",
-  },
-  menu: {
-    marginTop: 15,
-  },
-  menuItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-  },
-  menuText: {
-    flex: 1,
-    fontSize: 16,
-    marginLeft: 10,
-    color: colors.text,
-  },
-});
+

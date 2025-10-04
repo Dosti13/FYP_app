@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 interface Report {
   id: string;
@@ -46,6 +47,7 @@ export default function ReportDetails() {
 
   if (loading) {
     return (
+      
       <View style={styles.loadingContainer}>
         <Text>Loading report details...</Text>
       </View>
@@ -59,8 +61,10 @@ export default function ReportDetails() {
       </View>
     );
   }
-
+  console.log("id");
+  
   return (
+    <SafeAreaView style={styles.container}>
     <ScrollView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>{report.title}</Text>
@@ -96,6 +100,7 @@ export default function ReportDetails() {
         <Text style={styles.description}>{report.description}</Text>
       </View>
     </ScrollView>
+    </SafeAreaView>
   );
 }
 

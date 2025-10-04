@@ -8,8 +8,8 @@ interface InputProps extends TextInputProps {
   error?: string;
   containerStyle?: object;
 }
-
 export function Input({ label, required, error, style,containerStyle, ...props }: InputProps) {
+  console.log("INpiut");
   return (
     <View style={[styles.container ,containerStyle]}>
       <Text style={styles.label}>
@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     color: colors.text,
-    marginBottom: 8,
+    marginBottom:2,
   },
   required: {
     color: '#ef4444',

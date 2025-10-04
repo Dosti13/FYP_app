@@ -8,6 +8,7 @@ interface StepIndicatorProps {
 }
 
 export function StepIndicator({ currentStep, totalSteps }: StepIndicatorProps) {
+  console.log("step indicator");
   return (
     <View style={styles.container}>
       {[...Array(totalSteps)].map((_, index) => (

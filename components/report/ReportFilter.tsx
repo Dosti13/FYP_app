@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Button } from '../common/Button';
-import { LocationPicker } from '../forms/LocationPicker';
 import { incidentTypes } from '../../constants/reportTypes';
 import { colors } from '../../constants/theme';
 
@@ -75,40 +74,12 @@ export function ReportFilter({ onFiltersChange }: ReportFilterProps) {
 
           <View style={styles.modalContent}>
             <Text style={styles.sectionTitle}>Location</Text>
-            <LocationPicker
-              selectedProvince={filters.province}
-              selectedCity={filters.city}
-              onProvinceChange={(province) => setFilters(prev => ({ ...prev, province, city: '' }))}
-              onCityChange={(city) => setFilters(prev => ({ ...prev, city }))}
-            />
+          
 
             <Text style={styles.sectionTitle}>Incident Type</Text>
             <View style={styles.incidentTypeGrid}>
-              {incidentTypes.map((type) => (
-                <TouchableOpacity
-                  key={type.id}
-                  style={[
-                    styles.incidentTypeOption,
-                    filters.incident_type === type.category && styles.selectedIncidentType
-                  ]}
-                  onPress={() => setFilters(prev => ({ 
-                    ...prev, 
-                    incident_type: prev.incident_type === type.category ? '' : type.category 
-                  }))}
-                >
-                  <Ionicons
-                    name={type.icon as any}
-                    size={20}
-                    color={filters.incident_type === type.category ? '#fff' : type.color}
-                  />
-                  <Text style={[
-                    styles.incidentTypeText,
-                    filters.incident_type === type.category && styles.selectedIncidentTypeText
-                  ]}>
-                    {type.category}
-                  </Text>
-                </TouchableOpacity>
-              ))}
+              
+                 
             </View>
           </View>
 

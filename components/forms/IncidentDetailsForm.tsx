@@ -5,6 +5,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { Input } from '../common/Input';
 import { IncidentData, VictimData } from '../../constants/types/report';
 import { colors } from '../../constants/theme';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 interface IncidentDetailsFormProps {
   incidentData: IncidentData;
@@ -105,6 +106,7 @@ export function IncidentDetailsForm({
   };
 
   return (
+   
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <Text style={styles.title}>Incident Details</Text>
       <Text style={styles.subtitle}>When did this happen?</Text>
@@ -333,9 +335,9 @@ export function IncidentDetailsForm({
         onChangeText={(text) => onUpdateVictim({ email: text })}
       />
 
-      {/* Bottom Spacing */}
-      <View style={styles.bottomSpacing} />
+   
     </ScrollView>
+ 
   );
 }
 

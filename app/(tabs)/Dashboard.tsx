@@ -1,15 +1,22 @@
-import { Text ,ScrollView,Image} from 'react-native';
-import { Button } from '../../components/common/Button';
+import { Button } from '@/components/common/Button';
 import { useRouter } from 'expo-router';
-import React, { useEffect } from "react";
-import * as Location from "expo-location";
-import { restrictedAreaWatcher } from '../../services/background/restrictedAreaWatcher';
-// import { restrictedAreas } from '../../utils/dumyData';
-// import { locationService } from '../../services/api/locationSevice';
-// import { notificationService } from '../../services/api/notificationService';
-export default function Dashboard() {
-  const route = useRouter();
-  
+import React, { useEffect } from 'react';
+import {
+  Dimensions,
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  Text,
+  View
+} from 'react-native';
+import RestrictedAreaMap from "../../components/map/heatMap";
+import { restrictedAreaWatcher } from "../../services/background/restrictedAreaWatcher";
+import tabStyles from '../../utils/tabStyle';
+import ReportListScreen from './Reportlist';
+const { width, height } = Dimensions.get('window');
+
+const Dashboard = () => {
+  const router = useRouter();
   useEffect(() => {
     // Start background watcher when app loads
     restrictedAreaWatcher.startWatching();
@@ -18,24 +25,48 @@ export default function Dashboard() {
       restrictedAreaWatcher.stopWatching();
     };
   }, []);
-
-
-  const handleAddReport = () => {
-    route.navigate('/report/add');
-  };
-  return (
-    <ScrollView>
-      <Image resizeMode='contain' source={require('../../assets/images/Map-Marker.png')} style={{width:100,height:100,alignSelf:'center',marginTop:50}} />
-      <Text style={{fontSize:30, textAlign:'center', marginTop:50}}>
-        Home Screen
-      </Text>
-      <Button
-                title="Add Report"
-                icon="add"
-                onPress={handleAddReport}
-                style={{ margin: 20 }}  
-              />
-    </ScrollView>
+  const MapArea = () => (
+    <View style={tabStyles.mapContainer}>
+      {/* Map background with city names */}
+  <RestrictedAreaMap/>
+    </View>
   );
 
-}
+  const ReportItem = ({    }) => (
+    <View style={tabStyles.reportItem}>
+      <ReportListScreen/>
+    </View>
+  );
+console.log("dash");
+  return (
+    <SafeAreaView style={tabStyles.container}>
+      <StatusBar barStyle="dark-content" backgroundColor="#f8f8f8" />
+      
+  
+
+      {/* Map Section */}
+      <MapArea />
+
+      {/* Recent Reports Section */}
+      <View style={tabStyles.reportsSection}>
+        <Text style={tabStyles.sectionTitle}>Recent Reports</Text>
+        <ScrollView style={tabStyles.reportsList} showsVerticalScrollIndicator={false}>
+        </ScrollView>
+      </View>
+
+      {/* Add Report Button */}
+      <Button style={tabStyles.addButton}
+        title='Add Report'
+        icon='add'
+        onPress={() => router.navigate('/report/add')}
+        />
+
+
+  
+    </SafeAreaView>
+  );
+};
+
+
+
+export default Dashboard;

@@ -2,6 +2,7 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Button } from './Button';
 import { colors } from '../../constants/theme';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 interface NavigationButtonsProps {
   currentStep: number;
@@ -26,9 +27,10 @@ export function NavigationButtons({
 }: NavigationButtonsProps) {
   const isLastStep = currentStep === totalSteps || (currentStep === 3 && !requiresItem);
   const showBackButton = currentStep > 1;
-
+  console.log("nav button");
+  
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       {showBackButton && (
         <Button
           title="Back"
@@ -50,7 +52,7 @@ export function NavigationButtons({
           !showBackButton && styles.fullWidthButton
         ]}
       />
-    </View>
+    </SafeAreaView>
   );
 }
 

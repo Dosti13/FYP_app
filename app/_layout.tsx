@@ -1,38 +1,25 @@
-import { SafeAreaView, StatusBar } from "react-native";
-import { Stack } from "expo-router";
-import { useEffect, useState } from "react";
-import SplashScreen from "./Splashscreen";
+// app/_layout.tsx
+import { ClerkProvider } from "@clerk/clerk-expo";
+import * as SecureStore from "expo-secure-store";
+import RootNavigation from "./RootNevagation";
+import { AuthProvider } from "@/hooks/socialcontext";
+// Secure storage for Clerk tokens
+const tokenCache = {
+  getToken: (key: string) => SecureStore.getItemAsync(key),
+  saveToken: (key: string, value: string) => SecureStore.setItemAsync(key, value),
+};
+const CLERK_PUBLISHABLE_KEY = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY
 
 export default function RootLayout() {
-  const [isLoading, setIsLoading] = useState(true);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isFirstLaunch, setIsFirstLaunch] = useState(true);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 2000);
-    return () => clearTimeout(timer);
-  }, []);
-
-  if (isLoading) {
-    return <SplashScreen />;
-  }
-
+  console.log("root layout");
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
-      <StatusBar
-        barStyle="dark-content"
-        backgroundColor="transparent"
-        translucent={true}
-      />
-      <Stack screenOptions={{ headerShown: false}}>
-        {isFirstLaunch ? (
-          <Stack.Screen name="Onbording" options={{ headerShown: false }} />
-        ) : isLoggedIn ? (
-          <Stack.Screen name="(tabs)" options={{ title: "Dashboard" }} />
-        ) : (
-          <Stack.Screen name="(auth)" options={{ title: "Login" }} />
-        )}
-      </Stack>
-    </SafeAreaView>
+    <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY} tokenCache={tokenCache}>
+      <AuthProvider>
+          <RootNavigation />
+      </AuthProvider>
+    </ClerkProvider>
   );
 }
+
+// ✅ Handles auth, splash, and onboarding
+

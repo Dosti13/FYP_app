@@ -54,7 +54,6 @@ class AuthService {
     name: string;
     email: string;
     password: string;
-    phone?: string;
   }): Promise<{ user: User; tokens: AuthTokens }> {
     const result = await this.request<{ user: User; tokens: AuthTokens }>('/auth/register', {
       method: 'POST',

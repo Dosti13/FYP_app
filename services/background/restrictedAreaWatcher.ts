@@ -5,6 +5,8 @@ import { TASK_NAME } from "./restrictedAreaTask";
 
 class RestrictedAreaWatcher {
   async startWatching() {
+    console.log("Starting RestrictedAreaWatcher...");
+    
     const { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== "granted") {
       console.warn("Location permission not granted");
@@ -19,10 +21,11 @@ class RestrictedAreaWatcher {
     }
 
     // Start background updates
+    await Location.enableNetworkProviderAsync();
     await Location.startLocationUpdatesAsync(TASK_NAME, {
       accuracy: Location.Accuracy.High,
       timeInterval: 5000, // every 5 sec
-      distanceInterval: 20, // or every 20m
+      distanceInterval: 100, // or every 100m
       showsBackgroundLocationIndicator: true,
       foregroundService: {
         notificationTitle: "Restricted Area Monitoring",

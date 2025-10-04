@@ -14,6 +14,7 @@ import { StolenItemForm } from './StolenItemForm';
 
 import { useReportForm } from '../../hooks/useReportForm';
 import { colors } from '../../constants/theme';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export function MultiStepReportForm() {
   const {
@@ -71,7 +72,7 @@ export function MultiStepReportForm() {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       {/* Header */}
       <Header
         title="Report Incident"
@@ -101,7 +102,7 @@ export function MultiStepReportForm() {
           requiresItem={selectedIncidentType?.requiresItem}
         />
       </KeyboardAvoidingView>
-    </View>
+    </SafeAreaView>
   );
 }
 
