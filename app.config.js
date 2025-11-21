@@ -16,10 +16,9 @@ export default
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.jpg",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.snatchalerta.app",
+      "package": "com.snatchalert.app",
       "config": {
         "googleMaps": {
           "apiKey": process.env.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY

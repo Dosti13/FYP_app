@@ -1,9 +1,9 @@
 import * as React from "react";
-import { useAuth, useSignUp, useClerk, useOAuth } from "@clerk/clerk-expo";
 import * as WebBrowser from "expo-web-browser";
+WebBrowser.maybeCompleteAuthSession();
+import { useAuth, useSignUp, useClerk, useOAuth } from "@clerk/clerk-expo";
 
 // Required for OAuth to work properly
-WebBrowser.maybeCompleteAuthSession();
 
 type AuthContextType = {
   isSignedIn: boolean;

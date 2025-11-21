@@ -35,7 +35,7 @@ export default function SignIn() {
   // Auto-navigate when signed in
   useEffect(() => {
     if (isSignedIn) {
-      router.replace('/Dashboard'); // Redirect to dashboard or main app screen
+      router.replace('/Dashboard'); 
     }
   }, [isSignedIn]);
 
