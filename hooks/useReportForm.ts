@@ -1,4 +1,3 @@
-// hooks/useReportForm.ts
 import { useState, useCallback } from 'react';
 import { Alert } from 'react-native';
 import { router } from 'expo-router';
@@ -89,23 +88,63 @@ export function useReportForm() {
 
   const submitReport = useCallback(async () => {
     setIsLoading(true);
-
+        const formattedDateTime = new Date(reportData.incident.occurred_at).toISOString();
     try {
       const submissionData = {
-        location: reportData.location,
-        victim: {
-          ...reportData.victim,
-          age: reportData.victim.age ? parseInt(reportData.victim.age) : undefined,
-        },
-        incident_type: reportData.incident_type,
-        stolen_item: selectedIncidentType?.requiresItem ? reportData.stolen_item : undefined,
-        incident: {
-          ...reportData.incident,
-          value_estimate: reportData.incident.value_estimate ? 
-            parseFloat(reportData.incident.value_estimate) : undefined,
-        }
-      };
+  occurred_at: formattedDateTime,
 
+  location_data: {
+    province: reportData.location.province,
+    city: reportData.location.city,
+    district: reportData.location.district,
+    neighborhood: reportData.location.neighborhood,
+    street_address: reportData.location.street_address,
+   latitude: Number(reportData.location.latitude?.toFixed(6) || 0),
+    longitude: Number(reportData.location.longitude?.toFixed(6) || 0),
+  },
+
+  victim_data: {
+    name: reportData.victim.name,
+    age: Number(reportData.victim.age || 0),
+    Gender: reportData.victim.gender,
+    phone_number: reportData.victim.phone_number,
+    email: reportData.victim.email,
+    address: reportData.victim.address
+  },
+
+  incident_type_name: reportData?.incident_type?.category,
+
+  stolen_item_data: selectedIncidentType?.requiresItem
+    ? {
+        item_type: reportData.stolen_item.item_type,
+        description: reportData.stolen_item.description,
+        value_estimate: Number(reportData.stolen_item.value_estimate || 0),
+       imei: reportData.stolen_item.item_type === 'phone'
+        ? reportData.stolen_item.imei?.trim() || undefined // if empty, set undefined
+        : reportData.stolen_item.imei,
+        phone_brand: reportData.stolen_item.phone_brand,
+        phone_model: reportData.stolen_item.phone_model,
+        license_plate: reportData.stolen_item.license_plate,
+        chassis_number: reportData.stolen_item.chassis_number,
+        vehicle_make: reportData.stolen_item.vehicle_make,
+        vehicle_model: reportData.stolen_item.vehicle_model,
+      }
+    : undefined,
+
+  value_estimate: Number(reportData.incident.value_estimate || 0),
+
+  fir_filed: reportData.incident.fir_filed,
+
+  description: reportData?.incident_type?.description,
+
+  is_anonymous: true,
+  status: "reported",
+};
+
+
+    console.log("FINAL submission data →", submissionData);
+      console.log("submisson data ",submissionData);
+      
       const result = await apiService.submitReport(submissionData);
       
       if (result.success) {
@@ -113,8 +152,18 @@ export function useReportForm() {
       } else {
         Alert.alert('Submission Failed', result.message);
       }
-    } catch (error) {
+    } catch (error:any) {
       console.error('Report submission error:', error);
+  if (error?.data) {
+    console.log("🔥 BACKEND VALIDATION ERROR:", error.data);
+    Alert.alert(
+      'Submission Failed',
+      JSON.stringify(error.data, null, 2) // pretty print
+    );
+  } else {
+    console.error('Report submission error:', error);
+    Alert.alert('Error', error.message || 'Failed to submit report. Please try again.');
+  }
       Alert.alert('Error', 'Failed to submit report. Please try again.');
     } finally {
       setIsLoading(false);

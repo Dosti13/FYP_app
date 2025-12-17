@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Platform } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet,KeyboardAvoidingView, ScrollView, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Input } from '../common/Input';
 import { IncidentData, VictimData } from '../../constants/types/report';
 import { colors } from '../../constants/theme';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 interface IncidentDetailsFormProps {
   incidentData: IncidentData;
@@ -80,7 +79,7 @@ export function IncidentDetailsForm({
       newDateTime.setMinutes(selectedTime.getMinutes());
       
       setSelectedDate(newDateTime);
-      onUpdateIncident({ occurred_at: formatDateTime(newDateTime) });
+      onUpdateIncident({ occurred_at:  formatDateTime(newDateTime) });
     }
   };
 
@@ -108,6 +107,7 @@ export function IncidentDetailsForm({
   return (
    
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+      <KeyboardAvoidingView>
       <Text style={styles.title}>Incident Details</Text>
       <Text style={styles.subtitle}>When did this happen?</Text>
 
@@ -334,8 +334,16 @@ export function IncidentDetailsForm({
         value={victimData.email}
         onChangeText={(text) => onUpdateVictim({ email: text })}
       />
+      <Input
+        label="Address"
+        placeholder="123 Street, City, Country"
+        keyboardType="default"
+        autoCapitalize="none"
+        value={victimData.address}
+        onChangeText={(text) => onUpdateVictim({ address: text })}
+      />
 
-   
+   </KeyboardAvoidingView>
     </ScrollView>
  
   );

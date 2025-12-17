@@ -1,6 +1,7 @@
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import {
+  Alert,
     SafeAreaView,
     Text,
    
@@ -10,17 +11,32 @@ import { Logo } from '@/components/common/logo';
 import { Button } from '@/components/common/Button';
 import { authStyles } from './authStyles';
 import { Input } from '../../components/common/Input';
+import { authService } from '@/services';
+
 export default function ForgotPassword() {
   const router = useRouter();
   const [email, setEmail] = useState('');
+  const [isLoading, setLoading] = useState(false);
+  const handleResetPassword = async () => {
+    if (!email) {
+      Alert.alert('Error', 'Please enter your email.');
+      return;
+    }
 
-  const handleResetPassword = () => {
-    // Add password reset logic here
-    console.log('Password reset requested for:', email);
-    // Show success message and navigate back
-    router.navigate('/Signin');
+    try {
+      setLoading(true);
+      await authService.forgotPassword(email);
+      Alert.alert(
+        'Success',
+        'Password reset email sent! Please check your inbox.'
+      );
+      router.push('/Signin'); // Navigate to login page
+    } catch (error: any) {
+      Alert.alert('Error', error.message || 'Something went wrong');
+    } finally {
+      setLoading(false);
+    }
   };
-console.log("forgot pass");
 
   return (
     <SafeAreaView style={authStyles.container}>

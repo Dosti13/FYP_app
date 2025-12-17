@@ -7,10 +7,10 @@ export type TabParamList = {
   profile: undefined;
 };
 
-export type ReportParamList = {
-  add: undefined;
-  success: undefined;
-  [id: string]: { id: string };
-};
+// export type ReportParamList = {
+//   add: undefined;
+//   success: undefined;
+//   [id: string]: { id: string };
+// };
 
 export type TabScreenProps<T extends keyof TabParamList> = BottomTabScreenProps<TabParamList, T>;

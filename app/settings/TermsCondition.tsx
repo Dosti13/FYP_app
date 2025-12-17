@@ -1,23 +1,16 @@
 import React from "react";
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, ScrollView,  } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Button } from "@/components/common/Button";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const TermsAndConditions: React.FC = () => {
   const navigation = useNavigation();
-  console.log("terms");
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Button onPress={() => navigation.goBack()} 
-          title="← Back"
-          />
-          
+    <SafeAreaView style={styles.container}>
       
-        <Text style={styles.headerTitle}>Terms & Conditions</Text>
-      </View>
-
       <ScrollView style={styles.content}>
+        <Text style={styles.headerTitle}>Terms & Conditions</Text>
         <Text style={styles.sectionTitle}>1. Introduction</Text>
         <Text style={styles.text}>
           Welcome to Snatch Alert. By using this application, you agree to these terms and conditions.
@@ -50,7 +43,15 @@ const TermsAndConditions: React.FC = () => {
           If you have questions about these Terms, please contact us via the Help & Support page.
         </Text>
       </ScrollView>
-    </View>
+      <View style={styles.header}>
+        <Button onPress={() => navigation.goBack()} 
+          title="← Back"
+          />
+          
+      
+      </View>
+
+    </SafeAreaView>
   );
 };
 
@@ -60,8 +61,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     padding: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ddd",
+
   },
   backButton: { fontSize: 16, color: "#007AFF", marginRight: 10 },
   headerTitle: { fontSize: 18, fontWeight: "bold" },

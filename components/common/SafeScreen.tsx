@@ -9,7 +9,6 @@ interface SafeScreenProps {
 }
 
 export function SafeScreen({ children }: SafeScreenProps) {
-  console.log("safe screen");
   
   return (
     <SafeAreaView style={styles.container}>

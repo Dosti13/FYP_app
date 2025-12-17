@@ -4,7 +4,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function AuthLayout() {
   const insets = useSafeAreaInsets();
-  console.log("authloyout");
   
   return (
     <View style={{ flex: 1 }}>

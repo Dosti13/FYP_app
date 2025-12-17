@@ -8,7 +8,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 function Emailverification() {
   const [code, setCode] = React.useState ('');
   const [loading, setLoading] = React.useState(false);
-  console.log("emialveri");
   
   return (
     <SafeAreaView  style={authStyles.container}>

@@ -6,9 +6,9 @@ import { Input } from '@/components/common/Input';
 import { useAuthContext } from '@/hooks/socialcontext';
 import { authStyles } from './authStyles';
 import { Logo } from '@/components/common/logo';
+import { authService } from '@/services';
 import {
   Alert,
-  Image,
   SafeAreaView,
  
   
@@ -31,7 +31,6 @@ export default function SignIn() {
   });
 
   const { signInWithGoogle, signInWithFacebook, loading, isSignedIn } = useAuthContext();
-
   // Auto-navigate when signed in
   useEffect(() => {
     if (isSignedIn) {
@@ -71,10 +70,19 @@ export default function SignIn() {
       Alert.alert('Validation Error', 'All fields are required');
       return;
     }
-
+    authService.login({
+      email,
+      password,
+    }).then(({ user, tokens }) => {
+      console.log('User logged in:', user);
+      console.log('Auth tokens:', tokens);
+      Alert.alert('Login Successful', 'Welcome back!');
+       router.replace("/Dashboard");
+    }).catch((error) => {
+      console.error('Login error:', error);
+      Alert.alert('Login Failed', error.message || 'An error occurred during login. Please try again.');
+    })
     console.log('Signing in with:', email, password);
-    // Add your email/password authentication logic here
-    router.replace('/Dashboard');
   };
 
   useEffect(() => {
@@ -82,7 +90,6 @@ export default function SignIn() {
     if (touched.email) setEmailError(errors.email || "");
     if (touched.password) setPasswordError(errors.password || "");
   }, [password, email, touched]);
-  console.log("Signin ");
   
   return (
     <SafeAreaView style={authStyles.container}>
@@ -120,12 +127,10 @@ export default function SignIn() {
           style={authStyles.buttonSpacing}
           disabled={loading}
         />
-
-        <Button
-          style={authStyles.authLinkContainer}
-          onPress={() => router.navigate('/forgot-password')}
-          title="Forgot Password?"
-        />
+ 
+          <TouchableOpacity onPress={() => router.navigate('/(auth)/forgot-password')}>
+              <Text style={authStyles.forgotlink}>Forgot your password ? </Text>
+            </TouchableOpacity>
        
 
        

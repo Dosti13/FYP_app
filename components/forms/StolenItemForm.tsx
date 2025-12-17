@@ -110,7 +110,8 @@ export function StolenItemForm({ data, itemType, onUpdate }: StolenItemFormProps
       />
 
       {itemType === 'phone' && renderPhoneFields()}
-      {itemType === 'vehicle' && renderVehicleFields()}
+      {itemType === 'car' && renderVehicleFields()}
+      {itemType === 'bike' && renderVehicleFields()}
     </ScrollView>
   );
 }

@@ -3,7 +3,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { View, StatusBar } from 'react-native';
 
 export default function TabLayout() {
-  console.log("tablayout");
   
   return (
     <View style={{ flex: 1 }}>

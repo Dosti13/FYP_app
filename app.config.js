@@ -3,21 +3,24 @@ import 'dotenv/config';
 export default
 {
   "expo": {
-    "name": "SnatchALertaApp",
-    "slug": "SnatchALertaApp",
+    "name": "SnatchAlertApp",
+    "slug": "SnatchAlertApp",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/Map-Marker.png",
-    "scheme": "snatchalertaapp",
+    "scheme": "snatchalertapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true
     },
+     "extra": {
+      "EXPO_PUBLIC_API_BASE_URL": process.env.EXPO_PUBLIC_API_BASE_URL,
+    },
     "android": {
-      "adaptiveIcon": {
-        "backgroundColor": "#ffffff"
-      },
+     "adaptiveIcon": {
+  "foregroundImage": "./assets/images/Map-Marker.png",
+  "backgroundColor": "#ffffff"  // or "#52C41A" for green
+},
       "package": "com.snatchalert.app",
       "config": {
         "googleMaps": {

@@ -4,7 +4,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { incidentTypes } from '../../constants/reportTypes';
 import { colors } from '../../constants/theme';
 import { ReportData } from '../../constants/types/report';
-import { SafeAreaView } from 'react-native-safe-area-context';
 interface IncidentTypeSelectorProps {
   selectedType: any;
   onSelect: (type: any) => void;
@@ -13,7 +12,6 @@ interface IncidentTypeSelectorProps {
  }
 
 export function IncidentTypeSelector({ 
-  selectedType, 
   onSelect, 
   reportData, 
   onUpdateData 
@@ -31,7 +29,6 @@ export function IncidentTypeSelector({
   };
 
   return (
-    <SafeAreaView>
     <ScrollView style={styles.container}>
       <Text style={styles.title}>What happened?</Text>
       <Text style={styles.subtitle}>Select the type of incident</Text>
@@ -67,7 +64,6 @@ export function IncidentTypeSelector({
         ))}
       </View>
     </ScrollView>
-    </SafeAreaView>
   );
 }
 

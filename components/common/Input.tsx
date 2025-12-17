@@ -9,7 +9,6 @@ interface InputProps extends TextInputProps {
   containerStyle?: object;
 }
 export function Input({ label, required, error, style,containerStyle, ...props }: InputProps) {
-  console.log("INpiut");
   return (
     <View style={[styles.container ,containerStyle]}>
       <Text style={styles.label}>

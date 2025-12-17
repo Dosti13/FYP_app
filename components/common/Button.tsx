@@ -11,7 +11,6 @@ interface ButtonProps {
   loading?: boolean;
   icon?: keyof typeof Ionicons.glyphMap;
 style?: StyleProp<ViewStyle>;}
-console.log("btn");
 export function Button({ 
   title, 
   onPress, 
@@ -42,7 +41,6 @@ export function Button({
         return [styles.buttonText, styles.primaryButtonText];
     }
   };
-    console.log("button render");
     
   return (
     <TouchableOpacity

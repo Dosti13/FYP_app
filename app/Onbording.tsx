@@ -6,7 +6,6 @@ import { Logo } from "@/components/common/logo";
 import { Button } from "@/components/common/Button";
 export default function Onbording() {
   const router = useRouter();
-  console.log("onbaording ");
   
   return (
     <View style={styles.container}>

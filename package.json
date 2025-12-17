@@ -5,6 +5,7 @@
   "scripts": {
     "start": "expo start",
     "reset-project": "node ./scripts/reset-project.js",
+    "local-android": "eas build -p android --profile preview --local",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",

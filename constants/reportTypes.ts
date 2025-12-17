@@ -19,13 +19,22 @@ export const incidentTypes: IncidentType[] = [
     itemType: 'phone'
   },
   { 
-    id: 'vehicle_theft', 
-    category: 'Vehicle Theft',
-    description: 'Theft of cars, motorcycles, bicycles',
+    id: 'Car', 
+    category: 'Car',
+    description: 'Theft of cars, ',
     icon: 'car-outline', 
     color: '#dc2626',
     requiresItem: true,
-    itemType: 'vehicle'
+    itemType: 'car'
+  },
+  { 
+    id: 'Bike', 
+    category: 'Bike',
+    description: 'Theft of , motorcycles, ',
+    icon: 'bicycle-outline', 
+    color: '#dc2626',
+    requiresItem: true,
+    itemType: 'bike'
   },
   { 
     id: 'bag_snatch', 
@@ -34,7 +43,7 @@ export const incidentTypes: IncidentType[] = [
     icon: 'bag-outline', 
     color: '#f97316',
     requiresItem: true,
-    itemType: 'bag'
+    itemType: 'Bag'
   },
   { 
     id: 'other_theft', 

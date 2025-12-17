@@ -4,7 +4,6 @@ import { View, StyleSheet } from "react-native";
 import RestrictedAreaMap from "../../components/map/heatMap";
 
 export default function MapScreen() {
-  console.log("map screen");
   return (
     <View style={styles.container}>
       <RestrictedAreaMap />

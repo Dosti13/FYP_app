@@ -1,12 +1,14 @@
-// services/index.ts - Main services export
-
-
-// services/api/apiService.ts - Core API service (existing - enhanced)
+import { ApiUtils } from "../utils/apiUtils";
 interface IncidentResult {
   id: number;
   status?: string;
   [key: string]: any;
 }
+interface PaginatedReportResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: any[];}
 class ApiService {
   private baseUrl: string;
   private defaultHeaders: HeadersInit;
@@ -37,13 +39,14 @@ class ApiService {
       
       const response = await fetch(url, config);
       
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
-      }
+      const data = await response.json().catch(() => null);
+     if (!response.ok) {
+      // Throw the entire response data so you can see detailed backend errors
+      console.error("🔥 BACKEND ERROR DATA:", data);
+      throw { status: response.status, data };
+    }
 
-      const data = await response.json();
-      console.log('API Response:', data);
+       console.log('API Response:', data);
       
       return data;
     } catch (error) {
@@ -146,21 +149,28 @@ class ApiService {
     message: string;
   }> {
     try {
+      const clean = ApiUtils.sanitizeData(reportData);
+      console.log(clean,"clean data to submit");
+      
       console.log('Submitting complete report:', reportData);
 
       // Submit as single transaction
-      const result = await this.request<IncidentResult>('/incidents/submit', {
+      const result = await this.request<IncidentResult>('/reports/incidents/create/', {
         method: 'POST',
-        body: JSON.stringify(reportData),
+        body: JSON.stringify(clean),
       });
-
+    
       return {
         success: true,
         incident_id: result.id,
         message: 'Report submitted successfully',
       };
 
-    } catch (error) {
+    } catch (error:any) {
+     if (error.data) {
+      console.log("🔥 BACKEND ERROR DATA:", error.data);
+    }
+
       console.error('Report submission error:', error);
       return {
         success: false,
@@ -181,28 +191,16 @@ class ApiService {
       });
     }
 
-    return this.request(`/incidents?${queryParams.toString()}`);
+     const res = await this.request<PaginatedReportResponse>(`/reports/incidents?${queryParams.toString()}`);
+  return res.results; // TypeScript n
   }
 
   // Get Report Details
   async getReportDetails(incidentId: number): Promise<any> {
-    return this.request(`/incidents/${incidentId}`);
+    return this.request(`/reports/incidents/${incidentId}`);
   }
 
   // Statistics
-  async getIncidentStats(params?: any): Promise<any> {
-    const queryParams = new URLSearchParams();
-    
-    if (params) {
-      Object.entries(params).forEach(([key, value]) => {
-        if (value !== null && value !== undefined && value !== '') {
-          queryParams.append(key, String(value));
-        }
-      });
-    }
-
-    return this.request(`/incidents/stats?${queryParams.toString()}`);
-  }
 
   // Update Report Status
   async updateReportStatus(incidentId: number, updates: any): Promise<any> {

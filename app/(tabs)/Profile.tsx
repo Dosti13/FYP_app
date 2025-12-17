@@ -7,15 +7,22 @@ import { Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { colors } from "../../constants/theme";
 import tabStyles from "../../utils/tabStyle";
+import { authService } from "@/services";
 export default function Account() {
   const route = useRouter();
   const {user,isSignedIn} = useUser()
   const { signOut } = useAuth()
+  
+  authService.getCurrentUser().then((userData) => {
+    console.log("Current User Data in Profile Tab:", userData);
+  }).catch((error) => {
+    console.error("Error fetching current user data in Profile Tab:", error);
+  });
   const  handlelogout=()=> {
     signOut()
+    authService.logout();
     route.navigate('/Onbording')
   };
-  console.log("prof");
   return (
     <SafeAreaView style={tabStyles.container}>
       <Text style={tabStyles.header}>Profile & settings</Text>
@@ -32,8 +39,8 @@ export default function Account() {
       {/* Buttons */}
       <View style={tabStyles.buttonRow}>
         <Button title="see  my report"  style={tabStyles.addProfileBtn}  onPress={()=>route.navigate('/(tabs)/Reportlist')}/>
-\        <Button title="Logout"  style={tabStyles.logoutBtn}  onPress={handlelogout}/>
-\      </View>
+       <Button title="Logout"  style={tabStyles.logoutBtn}  onPress={handlelogout}/>
+      </View>
 
       {/* Menu */}
       <View style={tabStyles.menu}>
@@ -54,7 +61,7 @@ export default function Account() {
         </TouchableOpacity>
       </View>
     </SafeAreaView>
-  );
+  )
 }
 
 

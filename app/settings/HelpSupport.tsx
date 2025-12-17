@@ -7,11 +7,12 @@ import {
   Linking,
   ScrollView,
   ImageBackground,
-  SafeAreaView,
+
 } from "react-native";
+
 import { useNavigation } from "@react-navigation/native";
 import { Button } from "@/components/common/Button";
-
+import { SafeAreaView } from "react-native-safe-area-context";
 const HelpAndSupport: React.FC = () => {
   const navigation = useNavigation();
 
@@ -24,30 +25,15 @@ const HelpAndSupport: React.FC = () => {
   const handlePhone = () => {
     Linking.openURL("tel:+923481311332");
   };
-  console.log("help");
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header with image background */}
-      <ImageBackground
-        source={{ uri: "https://i.ibb.co/6b4v3N9/header-bg.png" }} // replace with your asset
-        style={styles.headerImage}
-        resizeMode="cover"
-      >
-        <View style={styles.headerContent}>
-          <Button
-           onPress={() => navigation.goBack()}
-            title="← Back"
-            style={styles.backButton} 
-            />
 
-          <Text style={styles.headerTitle}>Help & Support</Text>
-          <Text style={styles.headerSubtitle}>How can we help you?</Text>
-        </View>
-      </ImageBackground>
-
+    
       {/* Scrollable content */}
       <ScrollView style={styles.content}
         contentContainerStyle={{ paddingBottom: 40 }} >
+              <Text style={styles.headerTitle}>Help & Support</Text>
+          <Text style={styles.headerSubtitle}>How can we help you?</Text>
         <Text style={styles.sectionTitle}>Need Assistance?</Text>
         <Text style={styles.text}>
           If you face any issues or have questions, you can contact our support
@@ -121,23 +107,29 @@ const HelpAndSupport: React.FC = () => {
           an internet connection.
         </Text>
       </ScrollView>
+      
+          <View style={styles.headerContent}>
+          <Button
+           onPress={() => navigation.goBack()}
+            title="← Back"
+         
+            />
+
+        </View>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#0d0d0d" },
-  headerImage: {
-    width: "100%",
-    height: 160,
-    justifyContent: "flex-end",
-  },
+  container: { flex: 1, backgroundColor: "#ffffffff" },
+
   headerContent: {
-    backgroundColor: "rgba(0,0,0,0.5)",
-    padding: 15,
+    backgroundColor: "rgba(255, 255, 255, 0.5)",
+    padding: 2,
+    
   },
-  backButton: { fontSize: 16, color: "#4ade80", marginBottom: 8 },
-  headerTitle: { fontSize: 20, fontWeight: "bold", color: "#fff" },
+
+  headerTitle: { fontSize: 20, fontWeight: "bold", color: "#0a0a0aff" },
   headerSubtitle: { fontSize: 14, color: "#bbb", marginTop: 4 },
   content: { padding: 15 },
   sectionTitle: {
@@ -145,12 +137,12 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginTop: 20,
     marginBottom: 10,
-    color: "#fff",
+    color: "#000000ff",
   },
-  text: { fontSize: 14, lineHeight: 20, color: "#bbb" },
+  text: { fontSize: 14, lineHeight: 20, color: "#000000ff" },
   link: { fontSize: 14, color: "#4ade80", marginBottom: 10 },
-  question: { fontSize: 14, fontWeight: "600", marginTop: 10, color: "#fff" },
-  answer: { fontSize: 14, marginBottom: 10, color: "#bbb" },
+  question: { fontSize: 14, fontWeight: "600", marginTop: 10, color: "#000000ff" },
+  answer: { fontSize: 14, marginBottom: 10, color: "#000000ff" },
 });
 
 export default HelpAndSupport;

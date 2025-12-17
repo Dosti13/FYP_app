@@ -1,8 +1,8 @@
 // alertsApi.ts - BACKEND API CALLS
 import axios from 'axios';
 import { AlertMarker, CreateAlertRequest, NearbyAlertsRequest } from '../../types/alerts';
-
-const API_BASE_URL = 'https://your-backend-api.com/api';
+import { authService } from '../auth/authService';
+const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL || 'https://api.snatchalerta.com';
 
 // Axios instance with base configuration
 const apiClient = axios.create({
@@ -15,7 +15,8 @@ const apiClient = axios.create({
 
 // Add auth token to requests
 apiClient.interceptors.request.use((config) => {
-  const token = getAuthToken(); // From secure storage
+  const token =  authService.getAuthHeader()
+  console.log("TOKEN INSIDE ALERTS API",token);
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }

@@ -1,8 +1,9 @@
 import { useRouter } from 'expo-router';
-import { use, useEffect, useState } from 'react';
+import {  useEffect, useState } from 'react';
 import {AuthValidationService} from '../../services/auth/AuthValidationService';
 import { SocialLoginButtons } from '@/components/common/SocialLoginButtons';
 import { useAuthContext } from '@/hooks/socialcontext';
+import { authService } from '@/services';
 import {
   Alert,
     ScrollView,
@@ -17,46 +18,71 @@ import { Button } from '@/components/common/Button';
 import { Logo } from '@/components/common/logo';
 import { authStyles } from './authStyles';
 export default function SignUp() {
-  const [fullName, setFullName] = useState('');
+  const [fisrtname, setFirstname] = useState('');
+  const [lastname, setLastname] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
    const [passwordError, setPasswordError] = useState('');
      const [emaiError, setEmailError] = useState('');
+
      const [usernameError, setUsernameError] = useState('');
      const [cnfrmpaassError, setCnfrmPassError] = useState('');
+     const [phoneno, setPhoneno] = useState('');
+     const [phonenoError, setPhonenoError] = useState('');
      const [touched, setTouched] = useState({
-  fullName: false,
+  fisrtname: false,
+  lastname: false,
   email: false,
+  phoneno: false,
   password: false,
   confirmPassword: false,
 });
   const router = useRouter();
     const { signInWithGoogle, signInWithFacebook, loading, isSignedIn } = useAuthContext();
-
+    
  const handleSignUp = () => {
        setTouched({
-            fullName: true,
+            fisrtname: true,
+            lastname: true,
             email: true,
+            phoneno: true,
             password: true,
             confirmPassword: true,
         });
-  const signupErrors = AuthValidationService.validateSignup(fullName, email, password, confirmPassword);
+  const signupErrors = AuthValidationService.validateSignup(fisrtname,lastname, email,phoneno, password, confirmPassword);
   if (Object.keys(signupErrors).length > 0) {
-    Alert.alert("all fields are required");
+   Alert.alert("Validation Error", "Please fix the highlighted errors.");
     return;
   }
-  console.log('Signing up with:', { fullName, email, password });
-  router.replace("/Dashboard");
+ authService.register({
+  first_name: fisrtname,   
+  last_name: lastname,
+    email,
+    phone : phoneno,
+    password,
+    password2: confirmPassword, 
+  }).then(({ user, tokens }) => {
+    console.log('User registered:', user);
+    console.log('Auth tokens:', tokens);
+    Alert.alert('Registration Successful', 'You can now log in with your credentials.');
+     router.replace("/Dashboard");
+  }).catch((error) => {
+    console.error('Registration error:', error);
+    Alert.alert('Registration Failed', error.message || 'An error occurred during registration. Please try again.');
+  })
+  console.log('Signing up with:', { fisrtname,lastname, email, password });
 };
 
 useEffect(() => { 
-  const errors = AuthValidationService.validateSignup(fullName, email, password, confirmPassword);
-  if (touched.fullName) setUsernameError(errors.username || "");
+  const errors = AuthValidationService.validateSignup(fisrtname,lastname , email,phoneno, password, confirmPassword);
+  if (touched.fisrtname) setUsernameError(errors.username || "");
+  if (touched.lastname) setUsernameError(errors.username || "");
+  if (touched.phoneno) setPhonenoError(errors.phone || "");
   if (touched.email) setEmailError(errors.email || "");
   if (touched.password) setPasswordError(errors.password || "");
   if (touched.confirmPassword) setCnfrmPassError(errors.confirm || "");
-}, [password, email, fullName, confirmPassword, touched]);
+}, [password, email, fisrtname,lastname,phoneno, confirmPassword, touched]);
 
   useEffect(() => {
     if (isSignedIn) {
@@ -82,7 +108,6 @@ useEffect(() => {
       Alert.alert('Login Failed', 'Could not sign in with Facebook. Please try again.');
     }
   };
-  console.log("SignUp")
   return (
     <SafeAreaView style={authStyles.container}>
     <KeyboardAwareScrollView
@@ -98,11 +123,20 @@ useEffect(() => {
 
         <View style={authStyles.formContainer}>
           <Input
-            placeholder="Full Name"
-            value={fullName}
-            onChangeText={setFullName}
+            placeholder="First Name"
+            value={fisrtname}
+            onChangeText={setFirstname}
             autoCapitalize="words"   
-            onBlur={() => setTouched(prev => ({ ...prev, fullName: true }))}
+            onBlur={() => setTouched(prev => ({ ...prev, fisrtname: true }))}
+            error={usernameError}
+            containerStyle={{ marginBottom: -10}}
+          />
+          <Input
+            placeholder="Last Name"
+            value={lastname}
+            onChangeText={ setLastname}
+            autoCapitalize="words"   
+            onBlur={() => setTouched(prev => ({ ...prev, lastname: true }))}
             error={usernameError}
             containerStyle={{ marginBottom: -10}}
           />
@@ -114,6 +148,16 @@ useEffect(() => {
             autoCapitalize="none"
             onBlur={() => setTouched(prev => ({ ...prev, email: true }))}
             error={emaiError}
+            style={{ marginBottom: -10}}
+          />
+          <Input
+            placeholder="Phone Number"
+            value={phoneno}
+            onChangeText={setPhoneno}
+            keyboardType="phone-pad"
+            autoCapitalize="none"
+            onBlur={() => setTouched(prev => ({ ...prev, phoneno: true }))}
+            error={phonenoError}
             style={{ marginBottom: -10}}
           />
          
@@ -158,4 +202,5 @@ useEffect(() => {
     </SafeAreaView>
   );
 }
+
 

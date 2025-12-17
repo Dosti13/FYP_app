@@ -27,10 +27,9 @@ export function NavigationButtons({
 }: NavigationButtonsProps) {
   const isLastStep = currentStep === totalSteps || (currentStep === 3 && !requiresItem);
   const showBackButton = currentStep > 1;
-  console.log("nav button");
   
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       {showBackButton && (
         <Button
           title="Back"
@@ -52,7 +51,7 @@ export function NavigationButtons({
           !showBackButton && styles.fullWidthButton
         ]}
       />
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -60,7 +59,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     paddingHorizontal: 20,
-    paddingVertical: 16,
+    paddingVertical: 12,
     backgroundColor: '#fff',
     borderTopWidth: 1,
     borderTopColor: colors.border,

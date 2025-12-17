@@ -6,7 +6,6 @@ type LogoProps = {
 };
 
 export const Logo: React.FC<LogoProps> = ({ title }) => {
-  console.log("logo ");
   return (
     <View style={styles.container}>
       <Image

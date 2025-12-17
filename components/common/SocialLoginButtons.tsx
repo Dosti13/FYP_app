@@ -24,7 +24,6 @@ export function GoogleSignInButton({
   disabled = false,
   style 
 }: SocialButtonProps) {
-  console.log("social login button");
   
   return (
     <TouchableOpacity

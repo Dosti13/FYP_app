@@ -116,7 +116,12 @@ export const authStyles = StyleSheet.create({
     fontSize: 14,
     fontFamily: 'DMBold',
   },
-
+  forgotlink: {
+    color: colors.primaryDark,
+    fontSize: 14,
+    fontFamily: 'DMBold',
+    marginTop: 10,
+  },
   // Keyboard avoiding
  
 });

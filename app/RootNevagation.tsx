@@ -1,17 +1,25 @@
 
 import { useAuth } from "@clerk/clerk-expo";
-import { SafeAreaView, StatusBar } from "react-native";
+import {  StatusBar ,View ,SafeAreaView} from "react-native";
 import { Stack } from "expo-router";
-import { useEffect, useState } from "react";
+import { useEffect, useState  } from "react";
 import SplashScreen from "./Splashscreen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAuthContext } from "@/hooks/socialcontext";
+import { restrictedAreaWatcher } from "../services/background/restrictedAreaWatcher";
 
 export default function RootNavigation() {
   const { isSignedIn,loading } = useAuthContext();
   const [isLoading, setIsLoading] = useState(true);
   const [isFirstLaunch, setIsFirstLaunch] = useState<boolean | null>(null);
+  useEffect(() => {
+    // Start background watcher when app loads
+    restrictedAreaWatcher.startWatching();
 
+    return () => {
+      restrictedAreaWatcher.stopWatching();
+    };
+  }, []);
   // Splash timeout
   useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 2000);
@@ -31,9 +39,8 @@ export default function RootNavigation() {
   }, []);
 
   if (isLoading || loading || isFirstLaunch === null) {
-    return <SplashScreen />;
+    return <SplashScreen />
   }
-  console.log("root");
   
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>

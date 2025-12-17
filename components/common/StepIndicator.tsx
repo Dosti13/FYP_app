@@ -8,7 +8,6 @@ interface StepIndicatorProps {
 }
 
 export function StepIndicator({ currentStep, totalSteps }: StepIndicatorProps) {
-  console.log("step indicator");
   return (
     <View style={styles.container}>
       {[...Array(totalSteps)].map((_, index) => (
@@ -42,7 +41,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 20,
+    paddingVertical: 10,
     backgroundColor: '#fff',
   },
   stepContainer: {

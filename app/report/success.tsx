@@ -7,7 +7,6 @@ import { Button } from '../../components/common/Button';
 import { colors } from '../../constants/theme';
 
 export default function ReportSuccessScreen() {
-  console.log("succces");
   
   return (
     <SafeScreen>

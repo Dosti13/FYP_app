@@ -7,7 +7,6 @@ interface HeaderProps {
   title: string;
   onBack: () => void;
 }
-console.log("headi");
 export function Header({ title, onBack }: HeaderProps) {
   return (
     <View style={styles.header}>

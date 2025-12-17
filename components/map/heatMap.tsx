@@ -14,6 +14,7 @@ export default function RestrictedAreasMap() {
   const mapRef = useRef<MapView>(null);
 
   // Get current location
+  
   const getCurrentLocation = async () => {
     try {
       const loc = await locationService.getCurrentLocation();

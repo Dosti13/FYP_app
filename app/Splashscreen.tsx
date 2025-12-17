@@ -7,7 +7,6 @@ export default function SplashScreen() {
   const router = useRouter();
 
 
-  console.log("splash screen");
   
 
   return (
