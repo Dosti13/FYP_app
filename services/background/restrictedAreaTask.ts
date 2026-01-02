@@ -1,71 +1,57 @@
-// services/background/restrictedAreaTask.ts
 import * as TaskManager from "expo-task-manager";
-import { locationService } from "../api/locationSevice";
 import { notificationService } from "../api/notificationService";
-import { dummyAreas } from "../../utils/dumyData";
+import { getCachedHeatmap } from "./heatmapCache";
+import { locationService } from "../api/locationSevice";
 
-const TASK_NAME = "RESTRICTED_AREA_TASK";
+export const TASK_NAME = "RESTRICTED_AREA_TASK";
 
-// Keep track of last restricted area state
-let lastAreaId: string | null = null;
-let lastNearbyId: string | null = null;
+let lastTriggeredArea: string | null = null;
 
 TaskManager.defineTask(TASK_NAME, async ({ data, error }) => {
   if (error) {
-    console.error("Task error:", error);
+    console.error("❌ Background task error:", error);
     return;
   }
 
-  const { locations } = data as any;
-  
-  if (!locations?.length) return;
+  const location = data?.locations?.[0];
+  if (!location) return;
 
-  const { latitude, longitude } = locations[0].coords;
+  const { latitude, longitude } = location.coords;
 
-  let currentArea: string | null = null;
-  let currentNearby: string | null = null;
+  const heatmap = await getCachedHeatmap();
+  console.log("🔥 heatmap inside task:", heatmap);
 
-  for (const area of dummyAreas) {
+  if (!heatmap.length) return;
+
+  for (const area of heatmap) {
     const distance = locationService.calculateDistance(
       latitude,
       longitude,
-      area.coordinates.latitude,
-      area.coordinates.longitude
+      Number(area.latitude),
+      Number(area.longitude)
     );
 
-    // ✅ Inside restricted area
-    if (distance <= area.radius) {
-      currentArea = area.id;
+    const radius = 300; // meters
+    const areaKey = `${area.city}-${area.district}`;
 
-      if (lastAreaId !== area.id) {
-        await notificationService.sendGeofencingAlert(
-          area.name,
-          area.riskLevel as "HIGH" | "MEDIUM" | "LOW",
-          `⚠️ You entered restricted area: ${area.name}`,
-          { latitude, longitude, areaId: area.id }
-        );
-      }
+    if (distance <= radius && lastTriggeredArea !== areaKey) {
+      lastTriggeredArea = areaKey;
+
+      const riskLevel =
+        area.incident_count >= 20
+          ? "HIGH"
+          : area.incident_count >= 10
+          ? "MEDIUM"
+          : "LOW";
+
+      await notificationService.sendGeofencingAlert(
+        `${area.district}, ${area.city}`,
+        riskLevel,
+        `⚠️ ${area.incident_count} incidents reported nearby`
+      );
+
+      console.log("🚨 Notification sent for:", areaKey);
       break;
     }
-
-    // ✅ Near restricted area (200m buffer)
-    if (distance <= area.radius + 200) {
-      currentNearby = area.id;
-
-      if (lastNearbyId !== area.id) {
-        await notificationService.sendGeofencingAlert(
-          area.name,
-          "LOW",
-          `ℹ️ You are near restricted area: ${area.name}`,
-          { latitude, longitude, areaId: area.id }
-        );
-      }
-    }
   }
-
-  // Update last states
-  lastAreaId = currentArea;
-  lastNearbyId = currentNearby;
 });
-
-export { TASK_NAME };

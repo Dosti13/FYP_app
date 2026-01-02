@@ -101,34 +101,93 @@ export class ApiUtils {
   }
 
   // Sanitize data before sending to API
-  static sanitizeData(data: any): any {
-    if (data === null || data === undefined) {
-      return null;
-    }
-    
-    if (Array.isArray(data)) {
-      return data.map(item => this.sanitizeData(item));
-    }
-    
-    if (typeof data === 'object') {
-      const sanitized: any = {};
-      
-      Object.entries(data).forEach(([key, value]) => {
-        if (value !== null && value !== undefined && value !== '') {
-          sanitized[key] = this.sanitizeData(value);
-        }
-      });
-      
-      return sanitized;
-    }
-    
-    // Trim strings
-    if (typeof data === 'string') {
-      return data.trim();
-    }
-    
+static deepSanitize(
+  data: any,
+  seen = new WeakSet(),
+  depth = 0,
+  maxDepth = 20
+): any {
+  // Prevent too deep recursion
+  if (depth > maxDepth) {
+    return undefined;
+  }
+
+  // Remove null & undefined
+  if (data === null || data === undefined) {
+    return undefined;
+  }
+
+  // Handle primitive types
+  if (
+    typeof data === 'number' ||
+    typeof data === 'boolean'
+  ) {
     return data;
   }
+
+  // Handle strings
+  if (typeof data === 'string') {
+    const trimmed = data.trim();
+    return trimmed === '' ? undefined : trimmed;
+  }
+
+  // Handle Date
+  if (data instanceof Date) {
+    return isNaN(data.getTime()) ? undefined : data;
+  }
+
+  // Prevent circular reference
+  if (typeof data === 'object') {
+    if (seen.has(data)) {
+      return undefined;
+    }
+    seen.add(data);
+  }
+
+  // Handle arrays
+  if (Array.isArray(data)) {
+    const sanitizedArray = data
+      .map(item =>
+        this.deepSanitize(item, seen, depth + 1, maxDepth)
+      )
+      .filter(item => item !== undefined);
+
+    return sanitizedArray.length > 0 ? sanitizedArray : undefined;
+  }
+
+  // Handle objects
+  if (typeof data === 'object') {
+    const sanitizedObject: any = {};
+
+    Object.entries(data).forEach(([key, value]) => {
+      // Prevent prototype pollution
+      if (
+        key === '__proto__' ||
+        key === 'constructor' ||
+        key === 'prototype'
+      ) {
+        return;
+      }
+
+      const sanitizedValue = this.deepSanitize(
+        value,
+        seen,
+        depth + 1,
+        maxDepth
+      );
+
+      if (sanitizedValue !== undefined) {
+        sanitizedObject[key] = sanitizedValue;
+      }
+    });
+
+    return Object.keys(sanitizedObject).length > 0
+      ? sanitizedObject
+      : undefined;
+  }
+
+  return undefined;
+}
 
   // Check if response indicates authentication error
   static isAuthError(error: any): boolean {

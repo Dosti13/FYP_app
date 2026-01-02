@@ -17,6 +17,7 @@ import {Input}  from '../../components/common/Input';
 import { Button } from '@/components/common/Button';
 import { Logo } from '@/components/common/logo';
 import { authStyles } from './authStyles';
+import { Ionicons } from '@expo/vector-icons';
 export default function SignUp() {
   const [fisrtname, setFirstname] = useState('');
   const [lastname, setLastname] = useState('');
@@ -30,6 +31,8 @@ export default function SignUp() {
      const [cnfrmpaassError, setCnfrmPassError] = useState('');
      const [phoneno, setPhoneno] = useState('');
      const [phonenoError, setPhonenoError] = useState('');
+       const [isLoading, setIsLoading] = useState(false);
+        const [generalError, setGeneralError] = useState('');
      const [touched, setTouched] = useState({
   fisrtname: false,
   lastname: false,
@@ -69,8 +72,11 @@ export default function SignUp() {
      router.replace("/Dashboard");
   }).catch((error) => {
     console.error('Registration error:', error);
-    Alert.alert('Registration Failed', error.message || 'An error occurred during registration. Please try again.');
-  })
+    // Alert.alert('Registration Failed', error.message || 'An error occurred during registration. Please try again.');
+    setGeneralError(error.message || 'An error occurred during registration. Please try again.');
+  }).finally(() => {
+    setIsLoading(false);
+  });
   console.log('Signing up with:', { fisrtname,lastname, email, password });
 };
 
@@ -120,7 +126,18 @@ useEffect(() => {
   >
       <ScrollView showsVerticalScrollIndicator={false}>
         <Logo title="Create Account" />
-
+ {generalError ? (
+              <View style={styles.errorBanner}>
+                <Ionicons name="alert-circle" size={20} color="#FF3B30" />
+                <Text style={styles.errorBannerText}>{generalError}</Text>
+                <TouchableOpacity 
+                  onPress={() => setGeneralError('')}
+                  style={styles.closeButton}
+                >
+                  <Ionicons name="close" size={18} color="#D32F2F" />
+                </TouchableOpacity>
+              </View>
+            ) : null}
         <View style={authStyles.formContainer}>
           <Input
             placeholder="First Name"
@@ -180,7 +197,7 @@ useEffect(() => {
             containerStyle={{ marginBottom: 20 }}
           />
           <Button 
-            title="Sign Up"
+            title={isLoading ? 'Signing Up...' : 'Sign Up'}
             onPress={handleSignUp}
             style={authStyles.buttonSpacing}
           />
@@ -204,3 +221,26 @@ useEffect(() => {
 }
 
 
+const styles = {
+  errorBanner: {
+    flexDirection: 'row' as const,
+    alignItems: 'center' as const,
+    backgroundColor: '#FFEBEE',
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 16,
+    borderLeftWidth: 4,
+    borderLeftColor: '#FF3B30',
+  },
+  errorBannerText: {
+    flex: 1,
+    marginLeft: 8,
+    marginRight: 8,
+    fontSize: 14,
+    color: '#D32F2F',
+    lineHeight: 20,
+  },
+  closeButton: {
+    padding: 4,
+  },
+};

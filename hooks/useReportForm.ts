@@ -85,91 +85,100 @@ export function useReportForm() {
       setCurrentStep(prev => prev - 1);
     }
   }, [currentStep]);
+const submitReport = useCallback(async () => {
+  setIsLoading(true);
 
-  const submitReport = useCallback(async () => {
-    setIsLoading(true);
-        const formattedDateTime = new Date(reportData.incident.occurred_at).toISOString();
-    try {
-      const submissionData = {
-  occurred_at: formattedDateTime,
+  const formattedDateTime = new Date(reportData.incident.occurred_at).toISOString();
+  
+  // Check if victim data is provided
+  const hasVictimData = !!(
+    reportData.victim.name ||
+    reportData.victim.age ||
+    reportData.victim.gender ||
+    reportData.victim.phone_number ||
+    reportData.victim.email ||
+    reportData.victim.address
+  );
 
-  location_data: {
-    province: reportData.location.province,
-    city: reportData.location.city,
-    district: reportData.location.district,
-    neighborhood: reportData.location.neighborhood,
-    street_address: reportData.location.street_address,
-   latitude: Number(reportData.location.latitude?.toFixed(6) || 0),
-    longitude: Number(reportData.location.longitude?.toFixed(6) || 0),
-  },
+  try {
+    const submissionData = {
+      occurred_at: formattedDateTime,
 
-  victim_data: {
-    name: reportData.victim.name,
-    age: Number(reportData.victim.age || 0),
-    Gender: reportData.victim.gender,
-    phone_number: reportData.victim.phone_number,
-    email: reportData.victim.email,
-    address: reportData.victim.address
-  },
+      location_data: {
+        province: reportData.location.province,
+        city: reportData.location.neighborhood,
+        district: reportData.location.district,
+        neighborhood: reportData.location.city,
+        street_address: reportData.location.street_address,
+        latitude: Number(reportData.location.latitude?.toFixed(6) || 0),
+        longitude: Number(reportData.location.longitude?.toFixed(6) || 0),
+      },
 
-  incident_type_name: reportData?.incident_type?.category,
+      victim_data: {
+        name: reportData.victim.name,
+        age: reportData.victim.age ? Number(reportData.victim.age) : undefined,
+        gender: reportData.victim.gender,
+        phone_number: reportData.victim.phone_number,
+        email: reportData.victim.email,
+        address: reportData.victim.address
+      },
 
-  stolen_item_data: selectedIncidentType?.requiresItem
-    ? {
-        item_type: reportData.stolen_item.item_type,
-        description: reportData.stolen_item.description,
-        value_estimate: Number(reportData.stolen_item.value_estimate || 0),
-       imei: reportData.stolen_item.item_type === 'phone'
-        ? reportData.stolen_item.imei?.trim() || undefined // if empty, set undefined
-        : reportData.stolen_item.imei,
-        phone_brand: reportData.stolen_item.phone_brand,
-        phone_model: reportData.stolen_item.phone_model,
-        license_plate: reportData.stolen_item.license_plate,
-        chassis_number: reportData.stolen_item.chassis_number,
-        vehicle_make: reportData.stolen_item.vehicle_make,
-        vehicle_model: reportData.stolen_item.vehicle_model,
-      }
-    : undefined,
+      incident_type_name: reportData?.incident_type?.category,
 
-  value_estimate: Number(reportData.incident.value_estimate || 0),
+      stolen_item_data: selectedIncidentType?.requiresItem
+        ? {
+            item_type: reportData.stolen_item.item_type,
+            description: reportData.stolen_item.description,
+            value_estimate: Number(reportData.stolen_item.value_estimate || 0),
+            imei: reportData.stolen_item.item_type === 'phone'
+              ? reportData.stolen_item.imei?.trim() || undefined
+              : reportData.stolen_item.imei,
+            phone_brand: reportData.stolen_item.phone_brand,
+            phone_model: reportData.stolen_item.phone_model,
+            license_plate: reportData.stolen_item.license_plate,
+            chassis_number: reportData.stolen_item.chassis_number,
+            vehicle_make: reportData.stolen_item.vehicle_make,
+            vehicle_model: reportData.stolen_item.vehicle_model,
+          }
+        : undefined,
 
-  fir_filed: reportData.incident.fir_filed,
+      value_estimate: Number(reportData.incident.value_estimate || 0),
 
-  description: reportData?.incident_type?.description,
+      fir_filed: reportData.incident.fir_filed,
 
-  is_anonymous: true,
-  status: "reported",
-};
+      description: reportData?.incident_type?.description,
 
+      is_anonymous: !hasVictimData, // false if victim data exists, true if no victim data
+
+      status: "reported",
+    };
 
     console.log("FINAL submission data →", submissionData);
-      console.log("submisson data ",submissionData);
-      
-      const result = await apiService.submitReport(submissionData);
-      
-      if (result.success) {
-        router.navigate('/report/success');
-      } else {
-        Alert.alert('Submission Failed', result.message);
-      }
-    } catch (error:any) {
-      console.error('Report submission error:', error);
-  if (error?.data) {
-    console.log("🔥 BACKEND VALIDATION ERROR:", error.data);
-    Alert.alert(
-      'Submission Failed',
-      JSON.stringify(error.data, null, 2) // pretty print
-    );
-  } else {
-    console.error('Report submission error:', error);
-    Alert.alert('Error', error.message || 'Failed to submit report. Please try again.');
-  }
-      Alert.alert('Error', 'Failed to submit report. Please try again.');
-    } finally {
-      setIsLoading(false);
-    }
-  }, [reportData, selectedIncidentType]);
+    console.log("submisson data ", submissionData);
+    
+    const result = await apiService.createIncident(submissionData);
 
+    if (result.success) {
+      router.navigate('/report/success');
+    } else {
+      Alert.alert('Submission Failed', result.message);
+    }
+  } catch (error: any) {
+    console.error('Report submission error:', error);
+    if (error?.data) {
+      console.log("🔥 BACKEND VALIDATION ERROR:", error.data);
+      Alert.alert(
+        'Submission Failed',
+        JSON.stringify(error.data, null, 2)
+      );
+    } else {
+      console.error('Report submission error:', error);
+      Alert.alert('Error', error.message || 'Failed to submit report. Please try again.');
+    }
+  } finally {
+    setIsLoading(false);
+  }
+}, [reportData, selectedIncidentType]);
   return {
     currentStep,
     reportData,

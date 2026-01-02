@@ -1,5 +1,5 @@
 export interface IncidentType {
-  id: string;
+  id: string ;
   category?: string | null;
   description: string;
   icon: string;
@@ -11,7 +11,7 @@ export interface IncidentType {
 export const incidentTypes: IncidentType[] = [
   { 
     id: 'mobile_snatch', 
-    category: 'Mobile Snatch',
+    category: 'Mobile Snatching',
     description: 'Theft of mobile phones by force',
     icon: 'phone-portrait-outline', 
     color: '#ef4444',
@@ -20,7 +20,7 @@ export const incidentTypes: IncidentType[] = [
   },
   { 
     id: 'Car', 
-    category: 'Car',
+    category: 'Car ',
     description: 'Theft of cars, ',
     icon: 'car-outline', 
     color: '#dc2626',
@@ -38,16 +38,16 @@ export const incidentTypes: IncidentType[] = [
   },
   { 
     id: 'bag_snatch', 
-    category: 'Bag Snatching',
+    category: 'bag',
     description: 'Theft of bags, purses, wallets',
     icon: 'bag-outline', 
     color: '#f97316',
     requiresItem: true,
-    itemType: 'Bag'
+    itemType: 'bag'
   },
   { 
     id: 'other_theft', 
-    category: 'Other Theft',
+    category: 'Other',
     description: 'Theft of items not listed elsewhere',
     icon: 'alert-circle-outline', 
     color: '#6b7280',

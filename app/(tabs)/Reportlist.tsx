@@ -38,13 +38,13 @@ export default function ReportListScreen() {
   useEffect(() => {
     const fetchReports = async () => {
       try {
-        const data = await apiService.getReports();
+        const data = await apiService.getIncidents();
         const mapped: Report[] = data.map((item: any) => ({
           id: item.id,
           location: item.location?.street_address || item.location?.area || item.location?.city || 'Unknown',
           type: item.incident_type?.category || 'Unknown',
           time: item.occurred_at
-            ? new Date(item.occurred_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            ? new Date(item.occurred_at).toLocaleString()
             : 'N/A',
           createdAt: item.occurred_at || item.created_at,
         }));
@@ -134,7 +134,7 @@ export default function ReportListScreen() {
             <FilterButton
               key={type.id}
               text={type.category || type.id}
-              active={selectedType?.id === type.id}
+              active={selectedType?.id=== type.id}
               color={type.color}
               onPress={() => setSelectedType(type)}
             />

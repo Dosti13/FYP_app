@@ -22,6 +22,7 @@ export function StolenItemForm({ data, itemType, onUpdate }: StolenItemFormProps
         maxLength={15}
         value={data.imei}
         onChangeText={(text) => onUpdate({ imei: text })}
+        required
       />
 
       <View style={styles.rowContainer}>

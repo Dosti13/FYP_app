@@ -1,6 +1,6 @@
 // SignIn.tsx - Updated with Social Login Components
 import { useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useEffect, useState ,useCallback} from 'react';
 import { AuthValidationService } from '../../services/auth/AuthValidationService';
 import { Input } from '@/components/common/Input';
 import { useAuthContext } from '@/hooks/socialcontext';
@@ -10,7 +10,7 @@ import { authService } from '@/services';
 import {
   Alert,
   SafeAreaView,
- 
+ ActivityIndicator,
   
   Text,
   TouchableOpacity,
@@ -18,6 +18,7 @@ import {
 } from 'react-native';
 import { Button } from '@/components/common/Button';
 import { SocialLoginButtons } from '@/components/common/SocialLoginButtons';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function SignIn() {
   const router = useRouter();
@@ -25,6 +26,8 @@ export default function SignIn() {
   const [password, setPassword] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [emailError, setEmailError] = useState('');
+   const [generalError, setGeneralError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const [touched, setTouched] = useState({
     email: false,
     password: false,
@@ -37,7 +40,11 @@ export default function SignIn() {
       router.replace('/Dashboard'); 
     }
   }, [isSignedIn]);
-
+useEffect(() => {
+    if (generalError) {
+      setGeneralError('');
+    }
+  }, [email, password]);
   const handleSignInWithGoogle = async () => {
     try {
       await signInWithGoogle();
@@ -58,33 +65,77 @@ export default function SignIn() {
     }
   };
 
-  const handleSignIn = () => {
+  const handleSignIn = useCallback(async () => {
+    // Mark all fields as touched
     setTouched({
       email: true,
       password: true,
     });
 
+    // Clear previous errors
+    setGeneralError('');
+
+    // Validate inputs
     const loginErrors = AuthValidationService.validateLogin(email, password);
 
     if (Object.keys(loginErrors).length > 0) {
-      Alert.alert('Validation Error', 'All fields are required');
+      setEmailError(loginErrors.email || '');
+      setPasswordError(loginErrors.password || '');
       return;
     }
-    authService.login({
-      email,
-      password,
-    }).then(({ user, tokens }) => {
-      console.log('User logged in:', user);
-      console.log('Auth tokens:', tokens);
-      Alert.alert('Login Successful', 'Welcome back!');
-       router.replace("/Dashboard");
-    }).catch((error) => {
-      console.error('Login error:', error);
-      Alert.alert('Login Failed', error.message || 'An error occurred during login. Please try again.');
-    })
-    console.log('Signing in with:', email, password);
-  };
 
+    setIsLoading(true);
+
+    try {
+      console.log('🔐 Attempting login with email:', email);
+
+      // Login with email/password
+      const { user, tokens } = await authService.login({
+        email:  email.trim().toLowerCase(),
+        password,
+      });
+
+      console.log('✅ Login successful:', {
+        userId: user.id,
+        email: user.email,
+      
+      });
+
+      // Navigate to dashboard
+      router.replace('/Dashboard');
+    } catch (error: any) {
+      console.error('❌ Login error:', error);
+
+      // Parse and display user-friendly error
+      let errorMessage = 'An error occurred during login. Please try again.';
+
+      if (error.message) {
+        const msg = error.message.toLowerCase();
+        
+        if (msg.includes('invalid') || msg.includes('incorrect') || msg.includes('wrong credentials')) {
+          errorMessage = 'Invalid email or password. Please check your credentials and try again.';
+        } else if (msg.includes('no active account') || msg.includes('not found')) {
+          errorMessage = 'No account found with this email. Please sign up first.';
+        } else if (msg.includes('network') || msg.includes('connection') || msg.includes('fetch')) {
+          errorMessage = 'Network error. Please check your internet connection and try again.';
+        } else if (msg.includes('blocked') || msg.includes('suspended') || msg.includes('disabled')) {
+          errorMessage = 'Your account has been suspended. Please contact support.';
+        } else if (msg.includes('verify') || msg.includes('verification') || msg.includes('not verified')) {
+          errorMessage = 'Please verify your email before logging in. Check your inbox.';
+        } else if (msg.includes('timeout')) {
+          errorMessage = 'Request timeout. Please try again.';
+        } else if (msg.includes('unauthorized') || msg.includes('401')) {
+          errorMessage = 'Invalid credentials. Please check your email and password.';
+        } else {
+          errorMessage = error.message;
+        }
+      }
+
+      setGeneralError(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [email, password, router]);
   useEffect(() => {
     const errors = AuthValidationService.validateLogin(email, password);
     if (touched.email) setEmailError(errors.email || "");
@@ -94,7 +145,18 @@ export default function SignIn() {
   return (
     <SafeAreaView style={authStyles.container}>
     <Logo title="Welcome Back" />
-
+       {generalError ? (
+              <View style={styles.errorBanner}>
+                <Ionicons name="alert-circle" size={20} color="#FF3B30" />
+                <Text style={styles.errorBannerText}>{generalError}</Text>
+                <TouchableOpacity 
+                  onPress={() => setGeneralError('')}
+                  style={styles.closeButton}
+                >
+                  <Ionicons name="close" size={18} color="#D32F2F" />
+                </TouchableOpacity>
+              </View>
+            ) : null}
       <View style={authStyles.formContainer}>
         <Input
           style={authStyles.input}
@@ -121,13 +183,19 @@ export default function SignIn() {
           error={passwordError}
         />
 
-        <Button
-          title="Sign In"
-          onPress={handleSignIn}
-          style={authStyles.buttonSpacing}
-          disabled={loading}
-        />
- 
+     <Button
+              title={isLoading ? 'Signing In...' : 'Sign In'}
+              onPress={handleSignIn}
+              style={authStyles.buttonSpacing}
+              disabled={isLoading}/>
+ {isLoading && (
+                <ActivityIndicator
+                  color="white"
+                  style={{ marginRight: 8 }}
+                  size="small"
+                />
+              )}
+            
           <TouchableOpacity onPress={() => router.navigate('/(auth)/forgot-password')}>
               <Text style={authStyles.forgotlink}>Forgot your password ? </Text>
             </TouchableOpacity>
@@ -154,3 +222,26 @@ export default function SignIn() {
   );
 }
 
+const styles = {
+  errorBanner: {
+    flexDirection: 'row' as const,
+    alignItems: 'center' as const,
+    backgroundColor: '#FFEBEE',
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 16,
+    borderLeftWidth: 4,
+    borderLeftColor: '#FF3B30',
+  },
+  errorBannerText: {
+    flex: 1,
+    marginLeft: 8,
+    marginRight: 8,
+    fontSize: 14,
+    color: '#D32F2F',
+    lineHeight: 20,
+  },
+  closeButton: {
+    padding: 4,
+  },
+};
