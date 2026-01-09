@@ -1,50 +1,63 @@
-# Welcome to your Expo app 👋
+# 🚨 SnatchAlert – Mobile Thief Alert Application (Frontend)
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+## 📌 Final Year Project (FYP)
 
-## Get started
+SnatchAlert is a **mobile-based crime alert application frontend** developed as part of a Final Year Project. This repository contains **only the frontend** of the application, built using **React Native with TypeScript**.
 
-1. Install dependencies
+The app allows users to report mobile snatching incidents, view crime-prone areas on a map, and check stolen mobile phones using IMEI numbers. All data is consumed from a **Django REST Framework backend** via secure APIs.
 
-   ```bash
-   npm install
-   ```
+---
 
-2. Start the app
+## 🎯 Project Overview
 
-   ```bash
-   npx expo start
-   ```
+Street crime and mobile snatching are serious problems in urban areas like Karachi. SnatchAlert provides a mobile-first solution to help users:
 
-In the output, you'll find options to open the app in a
+- Report theft incidents quickly
+- View crime hotspots on an interactive map
+- Check stolen mobile phones using IMEI numbers
+- Stay aware of unsafe areas
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+This repository focuses **only on the mobile application (frontend)**.
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+---
 
-## Get a fresh project
+## ✅ Features (Frontend)
 
-When you're ready, run:
+- 📱 Cross-platform mobile app (Android & iOS)
+- 🧾 Built with **TypeScript** for type safety
+- 🔐 User authentication UI
+- 🗺️ Google Maps integration for crime visualization
+- 📍 Location-based crime reporting UI
+- 📱 IMEI search interface
+- 📊 User-friendly dashboards and screens
+- 🔗 API integration with Django backend
 
-```bash
-npm run reset-project
-```
+---
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## 🧰 Technology Stack
 
-## Learn more
+### Mobile Application
+- React Native
+- TypeScript
+- Expo / React Native CLI
+- Axios (API calls)
 
-To learn more about developing your project with Expo, look at the following resources:
+### APIs
+- Django REST Framework (Backend – Separate Repository)
+- Google Maps API
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+---
 
-## Join the community
+## 🗺️ Application Flow
 
-Join our community of developers creating universal apps.
+1. User logs into the mobile app
+2. User reports a snatching incident
+3. App captures location and details
+4. Data is sent to Django backend APIs
+5. Crime locations are displayed on the map
+6. Users can search stolen mobiles using IMEI
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+---
+
+
+
