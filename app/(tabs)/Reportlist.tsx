@@ -25,7 +25,6 @@ interface Report {
   createdAt: string;
 }
 
-const route = useRouter();
 
 export default function ReportListScreen() {
   const [search, setSearch] = useState('');
@@ -33,6 +32,7 @@ export default function ReportListScreen() {
   const [loading, setLoading] = useState(true);
   const [selectedType, setSelectedType] = useState<IncidentType | 'All'>('All');
   const [sortByLatest, setSortByLatest] = useState(true);
+  const route = useRouter();
 
   // Fetch reports
   useEffect(() => {

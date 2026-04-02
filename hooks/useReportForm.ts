@@ -70,10 +70,12 @@ export function useReportForm() {
       const errors = getValidationErrors(reportData, currentStep);
 
   if (errors.length === 0) {
-    if (currentStep === totalSteps) {
-      submitReport();
-    } else {
+    if (currentStep !== totalSteps) {
+     
       setCurrentStep(prev => prev + 1);
+    } else {
+          Alert.alert('Validation Errors', errors.join('\n'));
+
     }
   } else {
     Alert.alert('Validation Errors', errors.join('\n'));
@@ -164,7 +166,6 @@ const submitReport = useCallback(async () => {
       Alert.alert('Submission Failed', result.message);
     }
   } catch (error: any) {
-    console.error('Report submission error:', error);
     if (error?.data) {
       console.log("🔥 BACKEND VALIDATION ERROR:", error.data);
       Alert.alert(

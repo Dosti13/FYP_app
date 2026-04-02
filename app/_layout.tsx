@@ -4,6 +4,8 @@ import { ClerkProvider } from "@clerk/clerk-expo";
 import * as SecureStore from "expo-secure-store";
 import RootNavigation from "./RootNevagation";
 import { AuthProvider } from "@/hooks/socialcontext";
+import { NotificationProvider } from "@/hooks/Notificationcontext ";
+
 // Secure storage for Clerk tokens
 WebBrowser.maybeCompleteAuthSession();
 const tokenCache = {
@@ -16,9 +18,11 @@ export default function RootLayout() {
   console.log("root layout");
   return (
     <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY} tokenCache={tokenCache}>
+      <NotificationProvider>
       <AuthProvider>
           <RootNavigation />
       </AuthProvider>
+      </NotificationProvider>
     </ClerkProvider>
   );
 }

@@ -169,9 +169,11 @@ class AuthService {
         });
       } catch (error) {
         console.warn('Logout failed:', error);
+      }finally{
+
+        await this.clearStorage();
       }
     }
-    await this.clearStorage();
   }
 
   async refreshToken(): Promise<AuthTokens> {

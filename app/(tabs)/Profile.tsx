@@ -3,6 +3,8 @@ import { useAuth, useUser } from "@clerk/clerk-expo";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
+import NotificationsScreen     from "../notification/Notificationsscreen";
+
 import { 
   Text, 
   TouchableOpacity, 
@@ -16,6 +18,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { colors } from "../../constants/theme";
 import { apiService, authService } from "@/services";
+import { NotificationBell } from "../notification/Notificationbell";
 
 const { width } = Dimensions.get('window');
 
@@ -148,6 +151,7 @@ export default function Account() {
         {/* Header */}
         <View style={styles.header}>
           <Text style={styles.headerTitle}>Profile</Text>
+      <NotificationBell />
         </View>
 
         {/* Profile Card */}

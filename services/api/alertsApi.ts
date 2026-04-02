@@ -14,8 +14,8 @@ const apiClient = axios.create({
 });
 
 // Add auth token to requests
-apiClient.interceptors.request.use((config) => {
-  const token =  authService.getAuthHeader()
+apiClient.interceptors.request.use(async (config) => {
+  const token = await authService.getAuthHeader()
   console.log("TOKEN INSIDE ALERTS API",token);
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;

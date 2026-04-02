@@ -1,8 +1,12 @@
 // services/api/apiService.ts
-import { authService } from '../auth/authService';
-import { ApiUtils } from '../utils/apiUtils';
+import { authService } from "../auth/authService";
+import { ApiUtils } from "../utils/apiUtils";
 // Response Types based on API documentation
-interface IncidentResult { id: number; status?: string; [key: string]: any; } 
+interface IncidentResult {
+  id: number;
+  status?: string;
+  [key: string]: any;
+}
 interface PaginatedResponse<T> {
   count: number;
   next: string | null;
@@ -118,7 +122,8 @@ class ApiService {
   private baseUrl: string;
 
   constructor() {
-    this.baseUrl = process.env.EXPO_PUBLIC_API_BASE_URL || 'http://localhost:8000/api';
+    this.baseUrl =
+      process.env.EXPO_PUBLIC_API_BASE_URL || "http://localhost:8000/api";
   }
 
   /**
@@ -127,26 +132,28 @@ class ApiService {
   private async request<T>(
     endpoint: string,
     options: RequestInit = {},
-    requiresAuth: boolean = true
+    requiresAuth: boolean = true,
   ): Promise<T> {
     try {
       const url = `${this.baseUrl}${endpoint}`;
-      
+
       const headers: Record<string, string> = {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       };
-      
+
       if (requiresAuth) {
         const authHeader = await authService.getAuthHeader();
-        console.log('🔑 Auth Header:', authHeader);
+        console.log("🔑 Auth Header:", authHeader);
         if (authHeader) {
-          headers['Authorization'] = authHeader;
+          headers["Authorization"] = authHeader;
         } else {
-          throw new Error('Authentication required but no valid token available');
+          throw new Error(
+            "Authentication required but no valid token available",
+          );
         }
       }
-      console.log('📤 Request Headers:', headers);
-      console.log('📦 Request Body:', options.body);
+      console.log("📤 Request Headers:", headers);
+      console.log("📦 Request Body:", options.body);
       if (options.headers) {
         Object.entries(options.headers).forEach(([key, value]) => {
           headers[key] = value as string;
@@ -158,45 +165,45 @@ class ApiService {
         headers,
       };
 
-      console.log(`API Request: ${config.method || 'GET'} ${url}`);
+      console.log(`API Request: ${config.method || "GET"} ${url}`);
 
       const response = await fetch(url, config);
-           console.log('📥 Response Status:', response.status);
-      console.log('📥 Response Headers:', response.headers)
+      console.log("📥 Response Status:", response.status);
+      console.log("📥 Response Headers:", response.headers);
       let data = null;
-      const contentType = response.headers.get('content-type');
-      if (contentType && contentType.includes('application/json')) {
+      const contentType = response.headers.get("content-type");
+      if (contentType && contentType.includes("application/json")) {
         try {
           const text = await response.text();
           data = text ? JSON.parse(text) : null;
         } catch (parseError) {
-          console.error('JSON parse error:', parseError);
+          console.error("JSON parse error:", parseError);
         }
       }
 
       if (!response.ok) {
-        console.error('API Error Response:', data);
-        
+        console.error("API Error Response:", data);
+
         if (response.status === 401 && requiresAuth) {
-          console.log('Got 401, attempting token refresh...');
+          console.log("Got 401, attempting token refresh...");
           try {
             await authService.refreshToken();
             return this.retryRequest<T>(endpoint, options, requiresAuth);
           } catch (refreshError) {
-            console.error('Token refresh failed:', refreshError);
-            throw { 
-              status: 401, 
-              data: { message: 'Session expired. Please login again.' } 
+            console.error("Token refresh failed:", refreshError);
+            throw {
+              status: 401,
+              data: { message: "Session expired. Please login again." },
             };
           }
         }
-        
-        throw { status: response.status, data };
+
+        throw new Error(data?.message || "API request failed");
       }
 
       return data;
     } catch (error) {
-      console.error('API Error:', error);
+      console.error("API Error:", error);
       throw error;
     }
   }
@@ -204,18 +211,18 @@ class ApiService {
   private async retryRequest<T>(
     endpoint: string,
     options: RequestInit = {},
-    requiresAuth: boolean = true
+    requiresAuth: boolean = true,
   ): Promise<T> {
     const url = `${this.baseUrl}${endpoint}`;
-    
+
     const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     };
 
     if (requiresAuth) {
       const authHeader = await authService.getAuthHeader();
       if (authHeader) {
-        headers['Authorization'] = authHeader;
+        headers["Authorization"] = authHeader;
       }
     }
 
@@ -231,55 +238,55 @@ class ApiService {
     };
 
     const response = await fetch(url, config);
-    
+
     let data = null;
-    const contentType = response.headers.get('content-type');
-    if (contentType && contentType.includes('application/json')) {
+    const contentType = response.headers.get("content-type");
+    if (contentType && contentType.includes("application/json")) {
       const text = await response.text();
       data = text ? JSON.parse(text) : null;
     }
 
     if (!response.ok) {
-      throw { status: response.status, data };
+      throw new Error(data?.message || "API request failed");
     }
 
     return data;
   }
 
-
- async createIncident(reportData: any): Promise<{
+  async createIncident(reportData: any): Promise<{
     success: boolean;
     incident_id?: number;
     message: string;
   }> {
     try {
-      
-
       const clean = ApiUtils.deepSanitize(reportData);
-      console.log('Submitting complete report:', clean);
+      console.log("Submitting complete report:", clean);
 
       // Submit as single transaction console.log('📋 Submitting complete report:', reportData);
-      console.log('📋 Report as JSON:', JSON.stringify(reportData, null, 2));
-      const result = await this.request<IncidentResult>('/reports/incidents/create/', {
-        method: 'POST',
-        body: JSON.stringify(clean),
-      });
-    
+      console.log("📋 Report as JSON:", JSON.stringify(reportData, null, 2));
+      const result = await this.request<IncidentResult>(
+        "/reports/incidents/create/",
+        {
+          method: "POST",
+          body: JSON.stringify(clean),
+        },
+      );
+
       return {
         success: true,
         incident_id: result.id,
-        message: 'Report submitted successfully',
+        message: "Report submitted successfully",
       };
+    } catch (error: any) {
+      if (error.data) {
+        console.log("🔥 BACKEND ERROR DATA:", error.data);
+      }
 
-    } catch (error:any) {
-     if (error.data) {
-      console.log("🔥 BACKEND ERROR DATA:", error.data);
-    }
-
-      console.error('Report submission error:', error);
+      console.error("Report submission error:", error);
       return {
         success: false,
-        message: error instanceof Error ? error.message : 'Failed to submit report',
+        message:
+          error instanceof Error ? error.message : "Failed to submit report",
       };
     }
   }
@@ -303,20 +310,24 @@ class ApiService {
     page_size?: number;
   }): Promise<Incident[]> {
     const queryParams = new URLSearchParams();
-    
+
     if (params) {
       Object.entries(params).forEach(([key, value]) => {
-        if (value !== null && value !== undefined && value !== '') {
+        if (value !== null && value !== undefined && value !== "") {
           queryParams.append(key, String(value));
         }
       });
     }
-    
-    const endpoint = queryParams.toString() 
-      ? `/reports/incidents/?${queryParams.toString()}` 
-      : '/reports/incidents/';
 
-    const res = await this.request<PaginatedResponse<Incident>>(endpoint, {}, false);
+    const endpoint = queryParams.toString()
+      ? `/reports/incidents/?${queryParams.toString()}`
+      : "/reports/incidents/";
+
+    const res = await this.request<PaginatedResponse<Incident>>(
+      endpoint,
+      {},
+      false,
+    );
     return res.results;
   }
 
@@ -334,13 +345,16 @@ class ApiService {
    * PATCH /reports/incidents/{id}/update/
    * Permission: Authenticated (owner only)
    */
-  async updateIncident(id: number, updates: {
-    description?: string;
-    status?: string;
-    fir_filed?: boolean;
-  }): Promise<Incident> {
+  async updateIncident(
+    id: number,
+    updates: {
+      description?: string;
+      status?: string;
+      fir_filed?: boolean;
+    },
+  ): Promise<Incident> {
     return this.request<Incident>(`/reports/incidents/${id}/update/`, {
-      method: 'PATCH',
+      method: "PATCH",
       body: JSON.stringify(updates),
     });
   }
@@ -352,7 +366,7 @@ class ApiService {
    */
   async deleteIncident(id: number): Promise<void> {
     await this.request(`/reports/incidents/${id}/delete/`, {
-      method: 'DELETE',
+      method: "DELETE",
     });
   }
 
@@ -362,7 +376,9 @@ class ApiService {
    * Permission: Authenticated
    */
   async getMyIncidents(): Promise<Incident[]> {
-    const res = await this.request<PaginatedResponse<Incident>>('/reports/incidents/my/');
+    const res = await this.request<PaginatedResponse<Incident>>(
+      "/reports/incidents/my/",
+    );
     return res.results;
   }
 
@@ -382,10 +398,14 @@ class ApiService {
     reported_at?: string;
     message: string;
   }> {
-    return this.request('/reports/imei/check/', {
-      method: 'POST',
-      body: JSON.stringify({ imei }),
-    }, false);
+    return this.request(
+      "/reports/imei/check/",
+      {
+        method: "POST",
+        body: JSON.stringify({ imei }),
+      },
+      false,
+    );
   }
 
   /**
@@ -398,18 +418,18 @@ class ApiService {
     search?: string;
   }): Promise<IMEIRecord[]> {
     const queryParams = new URLSearchParams();
-    
+
     if (params) {
       Object.entries(params).forEach(([key, value]) => {
-        if (value !== null && value !== undefined && value !== '') {
+        if (value !== null && value !== undefined && value !== "") {
           queryParams.append(key, String(value));
         }
       });
     }
-    
-    const endpoint = queryParams.toString() 
-      ? `/reports/imei/list/?${queryParams.toString()}` 
-      : '/reports/imei/list/';
+
+    const endpoint = queryParams.toString()
+      ? `/reports/imei/list/?${queryParams.toString()}`
+      : "/reports/imei/list/";
 
     return this.request<IMEIRecord[]>(endpoint);
   }
@@ -419,12 +439,15 @@ class ApiService {
    * PATCH /reports/imei/{id}/update/
    * Permission: Admin/Authority
    */
-  async updateIMEI(id: number, updates: {
-    status?: string;
-    notes?: string;
-  }): Promise<IMEIRecord> {
+  async updateIMEI(
+    id: number,
+    updates: {
+      status?: string;
+      notes?: string;
+    },
+  ): Promise<IMEIRecord> {
     return this.request<IMEIRecord>(`/reports/imei/${id}/update/`, {
-      method: 'PATCH',
+      method: "PATCH",
       body: JSON.stringify(updates),
     });
   }
@@ -443,18 +466,18 @@ class ApiService {
     city?: string;
   }): Promise<HeatmapData[]> {
     const queryParams = new URLSearchParams();
-    
+
     if (params) {
       Object.entries(params).forEach(([key, value]) => {
-        if (value !== null && value !== undefined && value !== '') {
+        if (value !== null && value !== undefined && value !== "") {
           queryParams.append(key, String(value));
         }
       });
     }
-    
-    const endpoint = queryParams.toString() 
-      ? `/reports/heatmap/?${queryParams.toString()}` 
-      : '/reports/heatmap/';
+
+    const endpoint = queryParams.toString()
+      ? `/reports/heatmap/?${queryParams.toString()}`
+      : "/reports/heatmap/";
 
     return this.request<HeatmapData[]>(endpoint, {}, false);
   }
@@ -469,18 +492,18 @@ class ApiService {
     days?: number;
   }): Promise<SafetyScore[]> {
     const queryParams = new URLSearchParams();
-    
+
     if (params) {
       Object.entries(params).forEach(([key, value]) => {
-        if (value !== null && value !== undefined && value !== '') {
+        if (value !== null && value !== undefined && value !== "") {
           queryParams.append(key, String(value));
         }
       });
     }
-    
-    const endpoint = queryParams.toString() 
-      ? `/reports/safety-score/?${queryParams.toString()}` 
-      : '/reports/safety-score/';
+
+    const endpoint = queryParams.toString()
+      ? `/reports/safety-score/?${queryParams.toString()}`
+      : "/reports/safety-score/";
 
     return this.request<SafetyScore[]>(endpoint, {}, false);
   }
@@ -490,9 +513,7 @@ class ApiService {
    * GET /reports/statistics/
    * Permission: Public
    */
-  async getStatistics(params?: {
-    days?: number;
-  }): Promise<{
+  async getStatistics(params?: { days?: number }): Promise<{
     total_incidents: number;
     period_days: number;
     by_incident_type: Array<{ incident_type__category: string; count: number }>;
@@ -500,18 +521,18 @@ class ApiService {
     fir_filed_percentage: number;
   }> {
     const queryParams = new URLSearchParams();
-    
+
     if (params) {
       Object.entries(params).forEach(([key, value]) => {
-        if (value !== null && value !== undefined ) {
+        if (value !== null && value !== undefined) {
           queryParams.append(key, String(value));
         }
       });
     }
-    
-    const endpoint = queryParams.toString() 
-      ? `/reports/statistics/?${queryParams.toString()}` 
-      : '/reports/statistics/';
+
+    const endpoint = queryParams.toString()
+      ? `/reports/statistics/?${queryParams.toString()}`
+      : "/reports/statistics/";
 
     return this.request(endpoint, {}, false);
   }
@@ -531,18 +552,18 @@ class ApiService {
     location__city?: string;
   }): Promise<Alert[]> {
     const queryParams = new URLSearchParams();
-    
+
     if (params) {
       Object.entries(params).forEach(([key, value]) => {
-        if (value !== null && value !== undefined && value !== '') {
+        if (value !== null && value !== undefined && value !== "") {
           queryParams.append(key, String(value));
         }
       });
     }
-    
-    const endpoint = queryParams.toString() 
-      ? `/reports/alerts/?${queryParams.toString()}` 
-      : '/reports/alerts/';
+
+    const endpoint = queryParams.toString()
+      ? `/reports/alerts/?${queryParams.toString()}`
+      : "/reports/alerts/";
 
     return this.request<Alert[]>(endpoint, {}, false);
   }
@@ -560,8 +581,8 @@ class ApiService {
     valid_from: string;
     valid_until?: string;
   }): Promise<Alert> {
-    return this.request<Alert>('/reports/alerts/create/', {
-      method: 'POST',
+    return this.request<Alert>("/reports/alerts/create/", {
+      method: "POST",
       body: JSON.stringify(data),
     });
   }
@@ -580,18 +601,18 @@ class ApiService {
     search?: string;
   }): Promise<SafetyTip[]> {
     const queryParams = new URLSearchParams();
-    
+
     if (params) {
       Object.entries(params).forEach(([key, value]) => {
-        if (value !== null && value !== undefined && value !== '') {
+        if (value !== null && value !== undefined && value !== "") {
           queryParams.append(key, String(value));
         }
       });
     }
-    
-    const endpoint = queryParams.toString() 
-      ? `/core/safety-tips/?${queryParams.toString()}` 
-      : '/core/safety-tips/';
+
+    const endpoint = queryParams.toString()
+      ? `/core/safety-tips/?${queryParams.toString()}`
+      : "/core/safety-tips/";
 
     return this.request<SafetyTip[]>(endpoint, {}, false);
   }
@@ -606,8 +627,8 @@ class ApiService {
     content: string;
     category: string;
   }): Promise<SafetyTip> {
-    return this.request<SafetyTip>('/core/safety-tips/create/', {
-      method: 'POST',
+    return this.request<SafetyTip>("/core/safety-tips/create/", {
+      method: "POST",
       body: JSON.stringify(data),
     });
   }
@@ -626,10 +647,14 @@ class ApiService {
     message: string;
     contact_email: string;
   }): Promise<any> {
-    return this.request('/core/feedback/', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    }, false);
+    return this.request(
+      "/core/feedback/",
+      {
+        method: "POST",
+        body: JSON.stringify(data),
+      },
+      false,
+    );
   }
 
   /**
@@ -637,22 +662,20 @@ class ApiService {
    * GET /core/feedback/list/
    * Permission: Admin
    */
-  async listFeedback(params?: {
-    is_resolved?: boolean;
-  }): Promise<any[]> {
+  async listFeedback(params?: { is_resolved?: boolean }): Promise<any[]> {
     const queryParams = new URLSearchParams();
-    
+
     if (params) {
       Object.entries(params).forEach(([key, value]) => {
-        if (value !== null && value !== undefined ) {
+        if (value !== null && value !== undefined) {
           queryParams.append(key, String(value));
         }
       });
     }
-    
-    const endpoint = queryParams.toString() 
-      ? `/core/feedback/list/?${queryParams.toString()}` 
-      : '/core/feedback/list/';
+
+    const endpoint = queryParams.toString()
+      ? `/core/feedback/list/?${queryParams.toString()}`
+      : "/core/feedback/list/";
 
     return this.request<any[]>(endpoint);
   }
@@ -667,7 +690,7 @@ class ApiService {
    * Permission: Public
    */
   async getIncidentTypes(): Promise<IncidentType[]> {
-    return this.request<IncidentType[]>('/core/incident-types/', {}, false);
+    return this.request<IncidentType[]>("/core/incident-types/", {}, false);
   }
 
   // ==========================================

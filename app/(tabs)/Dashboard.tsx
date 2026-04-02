@@ -12,8 +12,9 @@ import {
   View
 } from 'react-native';
 import RestrictedAreaMap from "../../components/map/heatMap";
-import { apiService } from '@/services';
+import { apiService, notificationService } from '@/services';
 import tabStyles from '../../utils/tabStyle';
+import { NotificationBell } from "../notification/Notificationbell";
 
 interface DashboardStats {
   totalIncidents: number;
@@ -45,7 +46,13 @@ const Dashboard = () => {
   useEffect(() => {
     loadDashboardData();
   }, []);
+useEffect(() => {
+  notificationService.requestPermissions();
 
+  setTimeout(() => {
+    notificationService.sendEmergencyAlert("Test emergency 🚨");
+  }, 3000);
+}, []);
   const loadDashboardData = async () => {
     try {
       setLoading(true);
@@ -96,7 +103,67 @@ const Dashboard = () => {
       {subtitle && <Text style={tabStyles.statSubtitle}>{subtitle}</Text>}
     </View>
   );
+const RecentIncidentsList = () => (
+  <View style={{ paddingHorizontal: 16, marginBottom: 16 }}>
+    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+      <Text style={tabStyles.sectionTitle}>Recent Incidents</Text>
+      <TouchableOpacity onPress={() => router.push('/(tabs)/Reportlist')}>
+        <Text style={{ color: '#007AFF', fontSize: 13 }}>See All</Text>
+      </TouchableOpacity>
+    </View>
 
+    {recentIncidents.length === 0 ? (
+      <Text style={{ color: '#999', textAlign: 'center', padding: 20 }}>No recent incidents</Text>
+    ) : (
+      recentIncidents.slice(0, 3).map((incident) => (
+        <TouchableOpacity
+          key={incident.id}
+          onPress={() => router.push(`/report/${incident.id}`)}
+          style={{
+            backgroundColor: '#fff', borderRadius: 10, padding: 14,
+            marginBottom: 8, flexDirection: 'row', alignItems: 'center',
+            shadowColor: '#000', shadowOpacity: 0.05,
+            shadowOffset: { width: 0, height: 2 }, shadowRadius: 4, elevation: 2,
+          }}
+        >
+          <View style={{
+            width: 40, height: 40, borderRadius: 20,
+            backgroundColor: incident.status === 'resolved' ? '#e8f5e9' : '#fff3e0',
+            justifyContent: 'center', alignItems: 'center', marginRight: 12
+          }}>
+            <Text style={{ fontSize: 18 }}>
+              {incident.status === 'resolved' ? '✅' : '⏳'}
+            </Text>
+          </View>
+
+          <View style={{ flex: 1 }}>
+            <Text style={{ fontSize: 14, fontWeight: '600', color: '#1f2937' }}>
+              {incident.incident_type?.category ?? 'Unknown'}
+            </Text>
+            <Text style={{ fontSize: 12, color: '#6b7280', marginTop: 2 }}>
+              {incident.location?.city}, {incident.location?.district}
+            </Text>
+            <Text style={{ fontSize: 11, color: '#9ca3af', marginTop: 2 }}>
+              {new Date(incident.occurred_at).toLocaleDateString()}
+            </Text>
+          </View>
+
+          <View style={{
+            backgroundColor: incident.status === 'resolved' ? '#dcfce7' : '#fef3c7',
+            paddingHorizontal: 8, paddingVertical: 4, borderRadius: 20
+          }}>
+            <Text style={{
+              fontSize: 11, fontWeight: '600', textTransform: 'capitalize',
+              color: incident.status === 'resolved' ? '#16a34a' : '#d97706',
+            }}>
+              {incident.status}
+            </Text>
+          </View>
+        </TouchableOpacity>
+      ))
+    )}
+  </View>
+);
 
   const QuickActions = () => (
     <View style={tabStyles.quickActionsContainer}>
@@ -153,10 +220,7 @@ const Dashboard = () => {
         }
       >
         {/* Header */}
-        <View style={tabStyles.header}>
-          <Text style={tabStyles.headerTitle}>Dashboard</Text>
-          <Text style={tabStyles.headerSubtitle}>Crime Report Overview</Text>
-        </View>
+<NotificationBell  />
 
         {/* Statistics Cards */}
         <View style={tabStyles.statsContainer}>
@@ -186,13 +250,9 @@ const Dashboard = () => {
 
         {/* Quick Actions */}
         <QuickActions />
+        <RecentIncidentsList />
         {/* Map Section */}
-        <View style={tabStyles.mapSection}>
-          <Text style={tabStyles.sectionTitle}>Crime Heatmap</Text>
-          <View style={tabStyles.mapContainer}>
-            <RestrictedAreaMap />
-          </View>
-        </View>
+  
 
 
         
