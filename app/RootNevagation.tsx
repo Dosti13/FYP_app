@@ -1,12 +1,12 @@
-import { StatusBar, SafeAreaView } from "react-native";
+import { useAuthContext } from "@/hooks/socialcontext";
+import { authService } from "@/services";
+import { refreshHeatmap } from "@/services/background/heatmapCache";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Stack } from "expo-router";
 import { useEffect, useState } from "react";
-import SplashScreen from "./Splashscreen";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useAuthContext } from "@/hooks/socialcontext";
+import { SafeAreaView, StatusBar } from "react-native";
 import { restrictedAreaWatcher } from "../services/background/restrictedAreaWatcher";
-import { authService, notificationService } from "@/services";
-import { refreshHeatmap } from "@/services/background/heatmapCache";
+import SplashScreen from "./Splashscreen";
 
 export default function RootNavigation() {
   const { isSignedIn, loading: socialLoading } = useAuthContext();
@@ -23,32 +23,39 @@ export default function RootNavigation() {
   const checkAuthStatus = async () => {
     try {
       setAuthChecking(true);
-      
-      // Check if user is authenticated via email/password
-      const isAuth = await authService.isAuthenticated();
-      
-      if (isAuth) {
-        // Try to get user profile
-        const user = await authService.getCurrentUser();
-        if (user) {
-          setIsAuthenticated(true);
-          return;
+
+      try {
+        // Check if user is authenticated via email/password
+        const isAuth = await authService.isAuthenticated();
+
+        if (isAuth) {
+          try {
+            // Try to get user profile
+            const user = await authService.getCurrentUser();
+            if (user) {
+              setIsAuthenticated(true);
+              return;
+            }
+          } catch (e) {
+            console.warn("Failed to get current user:", e);
+          }
         }
+      } catch (e) {
+        console.warn("isAuthenticated check failed:", e);
       }
-      
+
       // Check if user is authenticated via social login
       if (isSignedIn) {
-        console.log('User authenticated via social login');
+        console.log("User authenticated via social login");
         setIsAuthenticated(true);
         return;
       }
-      
+
       // No authentication found
-      console.log('User not authenticated');
+      console.log("User not authenticated");
       setIsAuthenticated(false);
-      
     } catch (error) {
-      console.error('Auth check error:', error);
+      console.error("Auth check error:", error);
       setIsAuthenticated(false);
     } finally {
       setAuthChecking(false);
@@ -56,10 +63,19 @@ export default function RootNavigation() {
   };
 
   // Start background watcher
-useEffect(() => {
+  useEffect(() => {
     const init = async () => {
-      await refreshHeatmap("Karachi"); // MUST run first
-      await restrictedAreaWatcher.startWatching();
+      try {
+        await refreshHeatmap("Karachi"); // MUST run first
+      } catch (e) {
+        console.warn("Heatmap refresh failed:", e);
+      }
+
+      try {
+        await restrictedAreaWatcher.startWatching();
+      } catch (e) {
+        console.warn("Restricted area watcher failed:", e);
+      }
     };
 
     init();
@@ -95,7 +111,7 @@ useEffect(() => {
     return <SplashScreen />;
   }
 
-  console.log('Navigation State:', {
+  console.log("Navigation State:", {
     isFirstLaunch,
     isAuthenticated,
     isSignedIn,
@@ -103,7 +119,11 @@ useEffect(() => {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
-      <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
+      <StatusBar
+        barStyle="dark-content"
+        backgroundColor="transparent"
+        translucent
+      />
       <Stack screenOptions={{ headerShown: false }}>
         {isFirstLaunch ? (
           <Stack.Screen name="Onbording" />
