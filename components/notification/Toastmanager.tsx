@@ -1,17 +1,35 @@
-import React, { createContext, useCallback, useContext, useRef, useState } from 'react';
-import { AppNotification, NotificationType } from '../../hooks/Notificationcontext';
-import { NotificationToast } from './Notificationtoast ';
+import React, {
+    createContext,
+    useCallback,
+    useContext,
+    useRef,
+    useState,
+} from "react";
+import {
+    AppNotification
+} from "../../hooks/Notificationcontext";
+import { NotificationToast } from "./Notificationtoast ";
 
 interface ToastManagerContextType {
   showToast: (notification: AppNotification, onPress?: () => void) => void;
 }
 
-const ToastManagerContext = createContext<ToastManagerContextType | undefined>(undefined);
+const ToastManagerContext = createContext<ToastManagerContextType | undefined>(
+  undefined,
+);
 
-export function ToastManagerProvider({ children }: { children: React.ReactNode }) {
+export function ToastManagerProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [current, setCurrent] = useState<AppNotification | null>(null);
-  const [onPressCallback, setOnPressCallback] = useState<(() => void) | undefined>(undefined);
-  const queue = useRef<Array<{ notif: AppNotification; onPress?: () => void }>>([]);
+  const [onPressCallback, setOnPressCallback] = useState<
+    (() => void) | undefined
+  >(undefined);
+  const queue = useRef<Array<{ notif: AppNotification; onPress?: () => void }>>(
+    [],
+  );
   const isShowing = useRef(false);
 
   const processQueue = useCallback(() => {
@@ -26,15 +44,18 @@ export function ToastManagerProvider({ children }: { children: React.ReactNode }
     setOnPressCallback(() => next.onPress);
   }, []);
 
-  const showToast = useCallback((notification: AppNotification, onPress?: () => void) => {
-    if (isShowing.current) {
-      queue.current.push({ notif: notification, onPress });
-    } else {
-      isShowing.current = true;
-      setCurrent(notification);
-      setOnPressCallback(() => onPress);
-    }
-  }, []);
+  const showToast = useCallback(
+    (notification: AppNotification, onPress?: () => void) => {
+      if (isShowing.current) {
+        queue.current.push({ notif: notification, onPress });
+      } else {
+        isShowing.current = true;
+        setCurrent(notification);
+        setOnPressCallback(() => onPress);
+      }
+    },
+    [],
+  );
 
   const handleDismiss = useCallback(() => {
     isShowing.current = false;
@@ -57,6 +78,7 @@ export function ToastManagerProvider({ children }: { children: React.ReactNode }
 
 export function useToast() {
   const ctx = useContext(ToastManagerContext);
-  if (!ctx) throw new Error('useToast must be used within ToastManagerProvider');
+  if (!ctx)
+    throw new Error("useToast must be used within ToastManagerProvider");
   return ctx;
 }
