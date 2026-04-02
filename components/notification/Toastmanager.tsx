@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useContext, useRef, useState } from 'react';
-import { AppNotification, NotificationType } from '../../hooks/Notificationcontext ';
+import { AppNotification, NotificationType } from '../../hooks/Notificationcontext';
 import { NotificationToast } from './Notificationtoast ';
 
 interface ToastManagerContextType {

@@ -1,57 +1,59 @@
-import 'dotenv/config';
+import "dotenv/config";
 
-export default
-{
-  "expo": {
-    "name": "SnatchAlertApp",
-    "slug": "SnatchAlertApp",
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "scheme": "snatchalertapp",
-    "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
-    "ios": {
-      "supportsTablet": true
+export default {
+  expo: {
+    name: "SnatchAlertApp",
+    slug: "SnatchAlertApp",
+    version: "1.0.0",
+    orientation: "portrait",
+    scheme: "snatchalertapp",
+    userInterfaceStyle: "automatic",
+    newArchEnabled: true,
+    ios: {
+      supportsTablet: true,
     },
-     "extra": {
-      "EXPO_PUBLIC_API_BASE_URL": process.env.EXPO_PUBLIC_API_BASE_URL,
-    },
-    "android": {
-     "adaptiveIcon": {
-  "foregroundImage": "./assets/images/Map-Marker.png",
-  "backgroundColor": "#ffffff"  // or "#52C41A" for green
-},
-      "package": "com.snatchalert.app",
-      "config": {
-        "googleMaps": {
-          "apiKey": process.env.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY
-        }
+    extra: {
+      EXPO_PUBLIC_API_BASE_URL: process.env.EXPO_PUBLIC_API_BASE_URL,
+      eas: {
+        projectId: "1d30043a-de6a-4e9b-861b-bd374ffdf519",
       },
-      "edgeToEdgeEnabled": true
     },
-    "web": {
-      "bundler": "metro",
-      "output": "static",
-      "favicon": "./assets/images/favicon.png"
+    android: {
+      adaptiveIcon: {
+        foregroundImage: "./assets/images/Map-Marker.png",
+        backgroundColor: "#ffffff", // or "#52C41A" for green
+      },
+      package: "com.snatchalert.app",
+      config: {
+        googleMaps: {
+          apiKey: process.env.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY,
+        },
+      },
+      edgeToEdgeEnabled: true,
     },
-    "plugins": [
+    web: {
+      bundler: "metro",
+      output: "static",
+      favicon: "./assets/images/favicon.png",
+    },
+    plugins: [
       "expo-router",
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/Map-Marker.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
-        }
-      ]
+          image: "./assets/images/Map-Marker.png",
+          imageWidth: 200,
+          resizeMode: "contain",
+          backgroundColor: "#ffffff",
+        },
+      ],
     ],
-      "statusBar": {
-        "barStyle": "dark-content",
-        "translucent": true
-      },
-    "experiments": {
-      "typedRoutes": true
-    }
-  }
-}
+    statusBar: {
+      barStyle: "dark-content",
+      translucent: true,
+    },
+    experiments: {
+      typedRoutes: true,
+    },
+  },
+};

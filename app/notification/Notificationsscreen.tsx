@@ -10,7 +10,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { useNotifications, AppNotification, NotificationType } from '../../hooks/Notificationcontext ';
+import { useNotifications, AppNotification, NotificationType } from '../../hooks/Notificationcontext';
 
 const TYPE_META: Record<NotificationType, { icon: keyof typeof Ionicons.glyphMap; color: string; label: string }> = {
   emergency:     { icon: 'warning',           color: '#dc2626', label: 'Emergency' },

@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { useNotifications } from '../../hooks/Notificationcontext ';
+import { useNotifications } from '../../hooks/Notificationcontext';
 
 interface NotificationBellProps {
   color?: string;
