@@ -23,7 +23,6 @@ export async function getCachedHeatmap() {
     const stored = await AsyncStorage.getItem(HEATMAP_KEY);
     const parsed = stored ? JSON.parse(stored) : [];
 
-    console.log("📦 Cached heatmap:", parsed);
     return parsed;
   } catch (error) {
     console.error("❌ Heatmap read error:", error);

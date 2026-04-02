@@ -19,7 +19,6 @@ TaskManager.defineTask(TASK_NAME, async ({ data, error }) => {
   const { latitude, longitude } = location.coords;
 
   const heatmap = await getCachedHeatmap();
-  console.log("🔥 heatmap inside task:", heatmap);
 
   if (!heatmap.length) return;
 
