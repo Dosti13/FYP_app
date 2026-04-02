@@ -46,13 +46,8 @@ const Dashboard = () => {
   useEffect(() => {
     loadDashboardData();
   }, []);
-useEffect(() => {
-  notificationService.requestPermissions();
 
-  setTimeout(() => {
-    notificationService.sendEmergencyAlert("Test emergency 🚨");
-  }, 3000);
-}, []);
+
   const loadDashboardData = async () => {
     try {
       setLoading(true);
