@@ -168,8 +168,7 @@ class ApiService {
       console.log(`API Request: ${config.method || "GET"} ${url}`);
 
       const response = await fetch(url, config);
-      console.log("📥 Response Status:", response.status);
-      console.log("📥 Response Headers:", response.headers);
+     
       let data = null;
       const contentType = response.headers.get("content-type");
       if (contentType && contentType.includes("application/json")) {

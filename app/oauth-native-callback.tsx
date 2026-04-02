@@ -9,7 +9,6 @@ export default function OAuthCallback() {
 
   useEffect(() => {
     if (isLoaded) {
-      console.log("OAuth callback - Auth loaded, isSignedIn:", isSignedIn);
       
       if (isSignedIn) {
         // Redirect to your main authenticated screen

@@ -155,8 +155,6 @@ const submitReport = useCallback(async () => {
       status: "reported",
     };
 
-    console.log("FINAL submission data →", submissionData);
-    console.log("submisson data ", submissionData);
     
     const result = await apiService.createIncident(submissionData);
 

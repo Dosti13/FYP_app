@@ -117,7 +117,6 @@ export default function ReportDetails() {
       let debugMsg = '';
       
       // Check if user is authenticated
-      console.log('🔐 Checking if user is authenticated...');
       const isAuthenticated = await authService.isAuthenticated();
       
       if (!isAuthenticated) {

@@ -87,7 +87,6 @@ useEffect(() => {
     setIsLoading(true);
 
     try {
-      console.log('🔐 Attempting login with email:', email);
 
       // Login with email/password
       const { user, tokens } = await authService.login({

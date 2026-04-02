@@ -42,7 +42,6 @@ export default function Account() {
         // Fetch user data
         const userData = await authService.getCurrentUser();
         if (userData) {
-          console.log("✅ Email Auth User:", userData);
           setEmailUser(userData);
         }
 

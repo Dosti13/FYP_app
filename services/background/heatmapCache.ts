@@ -5,7 +5,6 @@ const HEATMAP_KEY = "HEATMAP_CACHE";
 
 export async function refreshHeatmap(city = "Karachi") {
   try {
-    console.log("🌍 Fetching heatmap from backend...");
 
     const heatmap = await apiService.getHeatmap({
       days: 30,

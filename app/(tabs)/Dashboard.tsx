@@ -11,7 +11,6 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
-import RestrictedAreaMap from "../../components/map/heatMap";
 import { apiService, notificationService } from '@/services';
 import tabStyles from '../../utils/tabStyle';
 import { NotificationBell } from "../notification/Notificationbell";
@@ -46,8 +45,13 @@ const Dashboard = () => {
   useEffect(() => {
     loadDashboardData();
   }, []);
+useEffect(() => {
+  notificationService.requestPermissions();
 
-
+  setTimeout(() => {
+    notificationService.sendEmergencyAlert("Test emergency 🚨");
+  }, 3000);
+}, []);
   const loadDashboardData = async () => {
     try {
       setLoading(true);

@@ -31,7 +31,6 @@ export default function RootNavigation() {
         // Try to get user profile
         const user = await authService.getCurrentUser();
         if (user) {
-          console.log('User authenticated via email:', user.email);
           setIsAuthenticated(true);
           return;
         }

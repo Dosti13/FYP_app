@@ -74,17 +74,13 @@ export default function RestrictedAreasMap() {
 
       const data = await apiService.getHeatmap({ days: 30 });
       
-      console.log('=== HEATMAP API RESPONSE ===');
       console.log('Total locations:', data.length);
       if (data.length > 0) {
-        console.log('First location raw data:', data[0]);
-        console.log('Latitude (raw):', data[0].latitude);
-        console.log('Longitude (raw):', data[0].longitude);
+        
         
         const lat = parseCoordinate(data[0].latitude);
         const lng = parseCoordinate(data[0].longitude);
-        console.log('Parsed coordinates:', { lat, lng });
-        console.log('Valid?', !isNaN(lat) && !isNaN(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180);
+       
       }
       console.log('===========================');
       

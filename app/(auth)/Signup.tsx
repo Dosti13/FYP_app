@@ -66,8 +66,6 @@ export default function SignUp() {
     password,
     password2: confirmPassword, 
   }).then(({ user, tokens }) => {
-    console.log('User registered:', user);
-    console.log('Auth tokens:', tokens);
     Alert.alert('Registration Successful', 'You can now log in with your credentials.');
      router.replace("/Dashboard");
   }).catch((error) => {

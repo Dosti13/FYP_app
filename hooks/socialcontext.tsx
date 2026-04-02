@@ -27,7 +27,6 @@ WebBrowser.maybeCompleteAuthSession();
      const signInWithGoogle = React.useCallback(async () => { try { setLoading(true); 
       const { createdSessionId, setActive ,...rest} = await startGoogleOAuth(); 
 
-      console.log(rest,"google rest");
       if (createdSessionId)
          { await setActive?.({ session: createdSessionId }); } 
       console.log(createdSessionId,"create session id ");
@@ -46,7 +45,6 @@ WebBrowser.maybeCompleteAuthSession();
       try {
          setLoading(true); 
          const { createdSessionId, setActive,...rest } = await startFacebookOAuth(); 
-        console.log(rest,"facebook rest");
 
          if (createdSessionId) 
 

@@ -92,7 +92,7 @@ class NotificationService {
     extra?: { location?: string; risk?: string; data?: any }
   ) {
     await Notifications.scheduleNotificationAsync({
-      content: { title, body, data: extra?.data ,sound: 'default',},
+      content: { title, body, data: extra?.data ,sound: 'default'},
       trigger: null,
     });
 
